@@ -1,0 +1,28 @@
+{
+  "name": "@cpro-js/ui5-vite-app-plugin",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "types": "./dist/ui5-vite-app-plugin.d.ts",
+    "import": "./dist/ui5-vite-app-plugin.js",
+    "require": "./dist/counter.umd.cjs"
+  },
+  "main": "./dist/ui5-vite-app-plugin.cjs",
+  "module": "./dist/ui5-vite-app-plugin.js",
+  "types": "./dist/ui5-vite-app-plugin.d.ts",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vite-plugin-dts": "^3.7.0"
+  },
+  "dependencies": {
+    "vite": "^5.0.10"
+  }
+}
