@@ -349,9 +349,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cpro-js/ui5-react-vite@workspace:projects/ui5-react-vite-wip":
+"@cpro-js/ui5-react-vite-wip@workspace:projects/ui5-react-vite-wip":
   version: 0.0.0-use.local
-  resolution: "@cpro-js/ui5-react-vite@workspace:projects/ui5-react-vite-wip"
+  resolution: "@cpro-js/ui5-react-vite-wip@workspace:projects/ui5-react-vite-wip"
   dependencies:
     "@types/node": "npm:^20.10.6"
     "@types/react": "npm:^18.2.43"
@@ -367,6 +367,25 @@ __metadata:
     typescript: "npm:^5.2.2"
     vite: "npm:^5.0.8"
     vite-plugin-css-injected-by-js: "npm:^3.3.1"
+  languageName: unknown
+  linkType: soft
+
+"@cpro-js/ui5-react-vite@workspace:projects/ui5-react-vite":
+  version: 0.0.0-use.local
+  resolution: "@cpro-js/ui5-react-vite@workspace:projects/ui5-react-vite"
+  dependencies:
+    "@types/react": "npm:^18.2.43"
+    "@types/react-dom": "npm:^18.2.17"
+    "@typescript-eslint/eslint-plugin": "npm:^6.14.0"
+    "@typescript-eslint/parser": "npm:^6.14.0"
+    "@vitejs/plugin-react": "npm:^4.2.1"
+    eslint: "npm:^8.55.0"
+    eslint-plugin-react-hooks: "npm:^4.6.0"
+    eslint-plugin-react-refresh: "npm:^0.4.5"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    typescript: "npm:^5.2.2"
+    vite: "npm:^5.0.8"
   languageName: unknown
   linkType: soft
 
