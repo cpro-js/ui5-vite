@@ -11,18 +11,19 @@
   "module": "./dist/ui5-vite-app-plugin.js",
   "types": "./dist/ui5-vite-app-plugin.d.ts",
   "files": [
-    "dist",
-    "index.d.ts"
+    "*.d.ts",
+    "*.md",
+    "dist"
   ],
   "scripts": {
     "build": "tsc && vite build",
     "dev": "vite"
   },
+  "dependencies": {
+    "vite": "^5.0.10"
+  },
   "devDependencies": {
     "typescript": "^5.3.3",
     "vite-plugin-dts": "^3.7.0"
-  },
-  "dependencies": {
-    "vite": "^5.0.10"
   }
 }
