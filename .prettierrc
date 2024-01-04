@@ -1,0 +1,32 @@
+{
+  "plugins": [
+    "@prettier/plugin-xml",
+    "prettier-plugin-imports",
+    "prettier-plugin-packagejson",
+    "prettier-plugin-properties"
+  ],
+  "printWidth": 120,
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": false,
+  "singleAttributePerLine": false,
+  "overrides": [
+    {
+      "files": [
+        "*.html",
+        "*.xml"
+      ],
+      "options": {
+        "xmlSelfClosingTags": true,
+        "xmlWhitespaceSensitivity": "ignore"
+      }
+    },
+    {
+      "files": "*.properties",
+      "options": {
+        "keySeparator": "="
+      }
+    }
+  ]
+}
+
