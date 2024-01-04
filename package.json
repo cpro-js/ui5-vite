@@ -5,6 +5,7 @@
   "license": "MIT",
   "module": "true",
   "workspaces": [
+    "projects/*",
     "packages/*"
   ],
   "husky": {
