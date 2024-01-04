@@ -1,11 +1,12 @@
 import { parse } from "url";
-import { EmittedAsset } from "rollup";
-import { normalizePath, ViteDevServer } from "vite";
+import { EmittedAsset, PluginContext } from "rollup";
+import { HmrContext, normalizePath, ViteDevServer } from "vite";
 import { BasePlugin } from "./BasePlugin.ts";
 
 export class ServePlugin extends BasePlugin {
+  private files: Array<EmittedAsset & { id: string }> = [];
+
   configureServer = async (server: ViteDevServer) => {
-    const ui5Files = this.getUi5Files();
     // serve all virtual files
     return () => {
       server.middlewares.use(async (req, res, next) => {
@@ -16,7 +17,7 @@ export class ServePlugin extends BasePlugin {
         if (!pathname) {
           return next();
         }
-        const fileToServe = ui5Files.find(
+        const fileToServe = this.files.find(
           (f) => !!f.fileName && normalizePath(pathname) === "/" + normalizePath(f.fileName),
         );
 
@@ -38,6 +39,29 @@ export class ServePlugin extends BasePlugin {
       });
     };
   };
+
+  buildStart(context: PluginContext) {
+    this.files = this.getUi5Files();
+    this.files.forEach((f) => context.addWatchFile(f.id));
+  }
+
+  watchChange(id: string) {
+    const changedFile = this.files.find((f) => f.id === id);
+    if (!changedFile) {
+      return;
+    }
+    // files changed --> read and process all UI5 files again
+    this.files = this.getUi5Files();
+  }
+
+  handleHotUpdate(context: HmrContext) {
+    const changedFile = this.files.find((f) => f.id === context.file);
+    if (!changedFile) {
+      return;
+    }
+    // UI5 files changed -> force full page reload
+    context.server.ws.send({ type: "full-reload" });
+  }
 
   async getFile(options: {
     url: string;

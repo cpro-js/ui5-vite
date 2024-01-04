@@ -30,6 +30,15 @@ export default (options: Ui5ViteAppPluginOptions): Plugin => {
     generateBundle(options, bundle, isWrite) {
       return plugin && "generateBundle" in plugin ? plugin.generateBundle(this, options, bundle, isWrite) : undefined;
     },
+    buildStart() {
+      return plugin && "buildStart" in plugin ? plugin.buildStart(this) : undefined;
+    },
+    watchChange(id, change) {
+      return plugin && "watchChange" in plugin ? plugin.watchChange(id) : undefined;
+    },
+    handleHotUpdate(context) {
+      return plugin && "handleHotUpdate" in plugin ? plugin.handleHotUpdate(context) : undefined;
+    },
     configureServer(server: ViteDevServer) {
       return plugin && "configureServer" in plugin ? plugin.configureServer(server) : undefined;
     },

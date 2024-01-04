@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
-import { EmittedFile } from "rollup";
-import { ConfigEnv, UserConfig } from "vite";
+import { EmittedAsset } from "rollup";
+import { ConfigEnv, normalizePath, UserConfig } from "vite";
 import { Ui5ViteAppPluginOptions } from "../index.ts";
 
 const virtualModuleId = "virtual:@cpro-js/ui5-vite-app-plugin/runtime";
@@ -85,30 +85,38 @@ export class BasePlugin {
      * Processed filename, e.g. main.[1156].js
      */
     outputFilename?: string;
-  }): Array<EmittedFile> {
+  }): Array<EmittedAsset & { id: string }> {
     // TODO UI5 template root directory
     const projectDir = path.resolve(this.viteConfig.root!, "..");
+
+    const componentJs = path.resolve(projectDir, "./ui5/Component.js");
+    const manifestJson = path.resolve(projectDir, "./ui5/manifest.json");
+    const indexUiHtml = path.resolve(projectDir, "./ui5/index-ui5.html");
+
     return [
       {
+        id: normalizePath(componentJs),
         name: "Component.js",
         fileName: "Component.js",
         type: "asset",
         source: fs
-          .readFileSync(path.resolve(projectDir, "./ui5/Component.js"))
+          .readFileSync(componentJs)
           .toString()
           .replace(options?.entryFilename ?? "", options?.outputFilename ?? ""),
       },
       {
+        id: normalizePath(manifestJson),
         name: "manifest.json",
         fileName: "manifest.json",
         type: "asset",
-        source: fs.readFileSync(path.resolve(projectDir, "./ui5/manifest.json")),
+        source: fs.readFileSync(manifestJson),
       },
       {
+        id: normalizePath(indexUiHtml),
         name: "index-ui5.html",
         fileName: "index-ui5.html",
         type: "asset",
-        source: fs.readFileSync(path.resolve(projectDir, "./ui5/index-ui5.html")),
+        source: fs.readFileSync(indexUiHtml),
       },
     ];
   }
