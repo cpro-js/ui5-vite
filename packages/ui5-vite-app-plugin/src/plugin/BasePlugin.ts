@@ -42,7 +42,6 @@ export class BasePlugin {
   };
 
   public load = (id: string) => {
-    console.log("load", id);
     if (id === resolvedVirtualModuleId) {
       const appId = this.pluginOptions.appId;
       const appPath = appId.replace(/\./g, "/");
@@ -77,15 +76,15 @@ export class BasePlugin {
     }
   };
 
-  protected getUi5Files(options: {
+  protected getUi5Files(options?: {
     /**
      * Original filename, e.g. main.tsx
      */
-    entryFilename: string;
+    entryFilename?: string;
     /**
      * Processed filename, e.g. main.[1156].js
      */
-    outputFilename: string;
+    outputFilename?: string;
   }): Array<EmittedFile> {
     // TODO UI5 template root directory
     const projectDir = path.resolve(this.viteConfig.root!, "..");
@@ -97,7 +96,7 @@ export class BasePlugin {
         source: fs
           .readFileSync(path.resolve(projectDir, "./ui5/Component.js"))
           .toString()
-          .replace(options.entryFilename, options.outputFilename),
+          .replace(options?.entryFilename ?? "", options?.outputFilename ?? ""),
       },
       {
         name: "manifest.json",
