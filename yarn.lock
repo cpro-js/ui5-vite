@@ -395,6 +395,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cpro-js/ui5-vite-app-plugin@workspace:packages/ui5-vite-app-plugin"
   dependencies:
+    "@types/normalize-path": "npm:^3.0.2"
+    normalize-path: "npm:^3.0.0"
     typescript: "npm:^5.3.3"
     vite: "npm:^5.0.10"
     vite-plugin-dts: "npm:^3.7.0"
@@ -1042,6 +1044,13 @@ __metadata:
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 6692ccfa8552ef60c4069fda3c8de726c23e8d403cdf788e3c7efa769987e80fbda5f02723dd857f9de7df24a5fa40b3ed4580ec3c5cbac04eba44cf7b2ab1dc
+  languageName: node
+  linkType: hard
+
+"@types/normalize-path@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "@types/normalize-path@npm:3.0.2"
+  checksum: c9ad01c8b396b88b415e35d53bbe9d6012fc09b431046d94a98bf2849e969d68d36be89ecacf1897aec7b3477f006b68a40d869143e273c902c35f715b1251fe
   languageName: node
   linkType: hard
 
@@ -3126,6 +3135,13 @@ __metadata:
   bin:
     nopt: bin/nopt.js
   checksum: 9bd7198df6f16eb29ff16892c77bcf7f0cc41f9fb5c26280ac0def2cf8cf319f3b821b3af83eba0e74c85807cc430a16efe0db58fe6ae1f41e69519f585b6aff
+  languageName: node
+  linkType: hard
+
+"normalize-path@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "normalize-path@npm:3.0.0"
+  checksum: e008c8142bcc335b5e38cf0d63cfd39d6cf2d97480af9abdbe9a439221fd4d749763bab492a8ee708ce7a194bb00c9da6d0a115018672310850489137b3da046
   languageName: node
   linkType: hard
 

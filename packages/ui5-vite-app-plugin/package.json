@@ -4,11 +4,9 @@
   "type": "module",
   "exports": {
     "types": "./dist/ui5-vite-app-plugin.d.ts",
-    "import": "./dist/ui5-vite-app-plugin.js",
-    "require": "./dist/counter.umd.cjs"
+    "import": "./dist/index.js"
   },
-  "main": "./dist/ui5-vite-app-plugin.cjs",
-  "module": "./dist/ui5-vite-app-plugin.js",
+  "module": "./dist/index.js",
   "types": "./dist/ui5-vite-app-plugin.d.ts",
   "files": [
     "*.d.ts",
@@ -20,9 +18,11 @@
     "dev": "vite"
   },
   "dependencies": {
+    "normalize-path": "^3.0.0",
     "vite": "^5.0.10"
   },
   "devDependencies": {
+    "@types/normalize-path": "^3.0.2",
     "typescript": "^5.3.3",
     "vite-plugin-dts": "^3.7.0"
   }

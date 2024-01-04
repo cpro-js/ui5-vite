@@ -4,11 +4,13 @@ import dts from "vite-plugin-dts";
 
 export default defineConfig({
   build: {
+    ssr: true,
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
-      formats: ["es", "cjs"],
-      name: "ui5-vite-app-plugin",
+      formats: ["es"],
     },
+    sourcemap: "inline",
+    minify: false,
   },
   plugins: [
     dts({

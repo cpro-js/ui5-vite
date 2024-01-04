@@ -1,6 +1,6 @@
-import { RenderOptions } from "@cpro-js/ui5-vite-app-plugin/runtime";
 import viteLogo from "/vite.svg";
 import { FC, useState } from "react";
+import { RenderOptions } from "virtual:@cpro-js/ui5-vite-app-plugin/runtime";
 import reactLogo from "./assets/react.svg";
 import "./App.css";
 
