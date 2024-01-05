@@ -1,6 +1,8 @@
+import fs from "fs";
+import path from "path";
 import { parse } from "url";
 import { EmittedAsset, PluginContext } from "rollup";
-import { HmrContext, normalizePath, ViteDevServer } from "vite";
+import { HmrContext, normalizePath, PreviewServer, ViteDevServer } from "vite";
 import { BasePlugin } from "./BasePlugin.ts";
 
 export class ServePlugin extends BasePlugin {
@@ -18,7 +20,7 @@ export class ServePlugin extends BasePlugin {
           return next();
         }
         const fileToServe = this.files.find(
-          (f) => !!f.fileName && normalizePath(pathname) === "/" + normalizePath(f.fileName),
+          (f) => !!f.fileName && normalizePath(pathname) === this.basePath + normalizePath(f.fileName),
         );
 
         if (!fileToServe || fileToServe.type !== "asset" || !fileToServe.fileName || !fileToServe.source) {
@@ -39,6 +41,35 @@ export class ServePlugin extends BasePlugin {
       });
     };
   };
+
+  configurePreviewServer(server: PreviewServer) {
+    const regexUrlStartsWithHash = /\/~([a-f0-9]*)~\//;
+    const outDir = server.config.build.outDir;
+    const cacheBusterJson: Record<string, string> = JSON.parse(
+      fs.readFileSync(path.join(outDir, "sap-ui-cachebuster-info.json"), "utf8"),
+    );
+    const swappedKeyValueCacheBusterJson = Object.fromEntries(Object.entries(cacheBusterJson).map((a) => a.reverse()));
+
+    // register our middleware to process cache buster files before all other middleware
+    server.middlewares.use(async (req, res, next) => {
+      if (req.method !== "GET" || !req.url) {
+        return next();
+      }
+      const { pathname } = parse(req.url, false);
+      if (!pathname) {
+        return next();
+      }
+
+      const matches = regexUrlStartsWithHash.exec(pathname);
+      if (!matches || !swappedKeyValueCacheBusterJson[matches[1]]) {
+        return next();
+      }
+
+      // found in cache buster --> simplify URL and pass it to the static file middleware
+      req.url = req.url.replace(regexUrlStartsWithHash, "/");
+      next();
+    });
+  }
 
   buildStart(context: PluginContext) {
     this.files = this.getUi5Files();
@@ -63,7 +94,7 @@ export class ServePlugin extends BasePlugin {
     context.server.ws.send({ type: "full-reload" });
   }
 
-  async getFile(options: {
+  private async getFile(options: {
     url: string;
     server: ViteDevServer;
     file: Required<EmittedAsset>;

@@ -1,18 +1,22 @@
 import fs from "fs";
 import path from "path";
 import { EmittedAsset } from "rollup";
-import { ConfigEnv, normalizePath, UserConfig } from "vite";
+import { ConfigEnv, normalizePath, ResolvedConfig, UserConfig } from "vite";
 import { Ui5ViteAppPluginOptions } from "../index.ts";
 
 const virtualModuleId = "virtual:@cpro-js/ui5-vite-app-plugin/runtime";
 const resolvedVirtualModuleId = "\0" + virtualModuleId;
 
 export class BasePlugin {
+  protected basePath: string;
+
   constructor(
-    protected viteConfig: UserConfig,
+    protected viteConfig: UserConfig | ResolvedConfig,
     protected viteEnv: ConfigEnv,
     protected pluginOptions: Ui5ViteAppPluginOptions,
-  ) {}
+  ) {
+    this.basePath = this.addTrailingSlash(viteConfig.base ?? "/");
+  }
 
   public config = () => {
     const config: Partial<UserConfig> = {
@@ -34,6 +38,11 @@ export class BasePlugin {
     };
     return config;
   };
+
+  public configResolved(config: ResolvedConfig) {
+    this.viteConfig = config;
+    this.basePath = this.addTrailingSlash(this.viteConfig.base ?? this.basePath);
+  }
 
   public resolveId = (id: string) => {
     if (id === virtualModuleId) {
@@ -66,10 +75,12 @@ export class BasePlugin {
           };
 
           // it is important to set public path for webpack's module loader
-          const basePath = typeof sap === 'undefined' ? "/" : sap.ui.require.toUrl("${appPath}/Component.js").replace(/Component\.js$/, "");
           window.__vitePublicAssetsURL = function(filename) {
-            console.log("__vitePublicAssetsURL", filename);
-            return basePath + filename;
+            const adjustedPath = typeof sap == 'undefined' ? "${this.basePath}" + filename : sap.ui.require.toUrl("${appPath}/" + filename);
+            const cacheBustedFilename = typeof sap === 'undefined' || typeof sap.ui.core.AppCacheBuster === 'undefined' ? adjustedPath : sap.ui.core.AppCacheBuster.convertURL(adjustedPath);
+
+            console.log("__vitePublicAssetsURL", filename, cacheBustedFilename);
+            return cacheBustedFilename;
           };
 
           `.trim();
@@ -142,5 +153,9 @@ export class BasePlugin {
         source: fs.readFileSync(indexUiHtml),
       },
     ];
+  }
+
+  private addTrailingSlash(path: string) {
+    return path.replace(/\/?$/, "/");
   }
 }

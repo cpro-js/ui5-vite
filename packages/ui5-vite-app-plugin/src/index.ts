@@ -1,4 +1,4 @@
-import { ConfigEnv, Plugin, UserConfig, ViteDevServer } from "vite";
+import { ConfigEnv, Plugin, PreviewServer, UserConfig, ViteDevServer } from "vite";
 import { BuildPlugin } from "./plugin/BuildPlugin.ts";
 import { ServePlugin } from "./plugin/ServePlugin.ts";
 
@@ -19,7 +19,10 @@ export default (options: Ui5ViteAppPluginOptions): Plugin => {
         plugin = new ServePlugin(config, configEnv, options);
       }
 
-      plugin?.config();
+      return plugin?.config();
+    },
+    configResolved(config) {
+      return plugin && "configResolved" in plugin ? plugin.configResolved(config) : undefined;
     },
     load(id) {
       return plugin?.load(id);
@@ -41,6 +44,9 @@ export default (options: Ui5ViteAppPluginOptions): Plugin => {
     },
     configureServer(server: ViteDevServer) {
       return plugin && "configureServer" in plugin ? plugin.configureServer(server) : undefined;
+    },
+    configurePreviewServer(server: PreviewServer) {
+      return plugin && "configurePreviewServer" in plugin ? plugin.configurePreviewServer(server) : undefined;
     },
   };
 };

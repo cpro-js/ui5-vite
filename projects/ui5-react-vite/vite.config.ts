@@ -9,6 +9,7 @@ const appId = manifest["sap.app"].id;
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "/",
   root: resolve(__dirname, "src"),
   publicDir: resolve(__dirname, "public"),
   build: {

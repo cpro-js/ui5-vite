@@ -1,5 +1,6 @@
+import crypto from "crypto";
 import path from "path";
-import { ModuleInfo, NormalizedOutputOptions, OutputBundle, PluginContext } from "rollup";
+import { EmittedAsset, ModuleInfo, NormalizedOutputOptions, OutputAsset, OutputBundle, PluginContext } from "rollup";
 import { normalizePath } from "vite";
 import { BasePlugin } from "./BasePlugin.ts";
 
@@ -10,6 +11,31 @@ export class BuildPlugin extends BasePlugin {
     bundle: OutputBundle,
     isWrite: boolean,
   ) => {
+    const ui5Files = this.generateUI5Files(context, bundle);
+
+    // enhance Vite's bundle to build the whole cache buster json
+    const bundleUI5Enhanced: OutputBundle = {
+      ...bundle,
+      ...ui5Files.reduce<OutputBundle>(
+        (map, file) => ({
+          ...map,
+          [file.fileName ?? file.name ?? ""]: {
+            ...file,
+            needsCodeReference: false,
+          } as OutputAsset,
+        }),
+        {},
+      ),
+    };
+    const cacheBuster = this.generateCacheBuster(context, bundleUI5Enhanced);
+
+    // emit all files
+    for (const file of [...ui5Files, cacheBuster]) {
+      context.emitFile(file);
+    }
+  };
+
+  private generateUI5Files(context: PluginContext, bundle: OutputBundle): Array<EmittedAsset & { id: string }> {
     const ui5Entry = Array.from(context.getModuleIds())
       .map((file) => context.getModuleInfo(file))
       .filter((mod): mod is ModuleInfo => !!mod)
@@ -37,8 +63,31 @@ export class BuildPlugin extends BasePlugin {
       outputFilename: ui5EntryOuput.fileName,
     });
 
-    for (const file of ui5Files) {
-      context.emitFile(file);
-    }
-  };
+    return ui5Files;
+  }
+
+  private generateCacheBuster(context: PluginContext, bundle: OutputBundle): EmittedAsset {
+    const hashes = Object.entries(bundle).map(([filename, output]) => {
+      const hasher = crypto.createHash("sha1");
+      hasher.update(output.type === "asset" ? output.source : output.code);
+      const hash = hasher.digest("hex");
+
+      return {
+        name: filename,
+        hash: hash,
+      };
+    });
+
+    const cacheBusterInfo = hashes.reduce<Record<string, string>>((map, asset) => {
+      map[asset.name] = asset.hash;
+      return map;
+    }, {});
+
+    return {
+      type: "asset",
+      name: "sap-ui-cachebuster-info.json",
+      fileName: "sap-ui-cachebuster-info.json",
+      source: JSON.stringify(cacheBusterInfo, null, 2),
+    };
+  }
 }
