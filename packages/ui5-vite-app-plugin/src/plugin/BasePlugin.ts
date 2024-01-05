@@ -93,7 +93,10 @@ export class BasePlugin {
     const manifestJson = path.resolve(projectDir, "./ui5/manifest.json");
     const indexUiHtml = path.resolve(projectDir, "./ui5/index-ui5.html");
 
-    return [
+    const appId = this.pluginOptions.appId;
+    const appPath = appId.replace(/\./g, "/");
+
+    const appFiles: Array<EmittedAsset & { id: string }> = [
       {
         id: normalizePath(componentJs),
         name: "Component.js",
@@ -110,6 +113,26 @@ export class BasePlugin {
         fileName: "manifest.json",
         type: "asset",
         source: fs.readFileSync(manifestJson),
+      },
+    ];
+
+    return [
+      ...appFiles,
+      {
+        name: "Component-preload.js",
+        fileName: "Component-preload.js",
+        id: normalizePath(componentJs),
+        type: "asset",
+        source: `sap.ui.require.preload(${JSON.stringify(
+          appFiles.reduce<{
+            [file: string]: string;
+          }>((map, file) => {
+            map[`${appPath}/${file.name}`] = file.source!.toString();
+            return map;
+          }, {}),
+          null,
+          "\t",
+        )}, "${appPath}/Component-preload");`,
       },
       {
         id: normalizePath(indexUiHtml),
