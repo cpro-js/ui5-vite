@@ -7,6 +7,7 @@ import { register } from "virtual:@cpro-js/ui5-vite-app-plugin/runtime";
 import { App } from "./App.tsx";
 
 register((rootNode, options) => {
+  console.log(options);
   const root = createRoot(rootNode);
   root.render(
     <StrictMode>

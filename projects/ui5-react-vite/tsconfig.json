@@ -17,8 +17,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "types": ["@sapui5/types"]
   },
-  "include": ["src"],
+  "include": ["src", "ui5"],
   "references": [
     {
       "path": "./tsconfig.node.json"

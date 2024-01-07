@@ -3,6 +3,7 @@ import path from "path";
 import { EmittedAsset } from "rollup";
 import { ConfigEnv, normalizePath, ResolvedConfig, UserConfig } from "vite";
 import { Ui5ViteAppPluginOptions } from "../index.ts";
+import { transformUi5Code } from "../transform/babel.ts";
 
 const virtualModuleId = "virtual:@cpro-js/ui5-vite-app-plugin/runtime";
 const resolvedVirtualModuleId = "\0" + virtualModuleId;
@@ -64,13 +65,13 @@ export class BasePlugin {
             startCb = cb;
           };
 
-          export const render = function (options) {
-            return startCb(options);
+          export const render = function (...args) {
+            return startCb(...args);
           };
 
           window["UI5_RUNNER@${this.pluginOptions.appId}"] = {
-            start: function(options) {
-              return startCb(options);
+            start: function(...args) {
+              return startCb(...args);
             },
           };
 
@@ -100,7 +101,7 @@ export class BasePlugin {
     // TODO UI5 template root directory
     const projectDir = path.resolve(this.viteConfig.root!, "..");
 
-    const componentJs = path.resolve(projectDir, "./ui5/Component.js");
+    const componentTs = path.resolve(projectDir, "./ui5/Component.ts");
     const manifestJson = path.resolve(projectDir, "./ui5/manifest.json");
     const indexUiHtml = path.resolve(projectDir, "./ui5/index-ui5.html");
 
@@ -109,14 +110,13 @@ export class BasePlugin {
 
     const appFiles: Array<EmittedAsset & { id: string }> = [
       {
-        id: normalizePath(componentJs),
+        id: normalizePath(componentTs),
         name: "Component.js",
         fileName: "Component.js",
         type: "asset",
-        source: fs
-          .readFileSync(componentJs)
-          .toString()
-          .replace(options?.entryFilename ?? "", options?.outputFilename ?? ""),
+        source: transformUi5Code("Component.ts", fs.readFileSync(componentTs).toString(), {
+          appId: appId,
+        }).replace(options?.entryFilename ?? "", options?.outputFilename ?? ""),
       },
       {
         id: normalizePath(manifestJson),
@@ -132,7 +132,7 @@ export class BasePlugin {
       {
         name: "Component-preload.js",
         fileName: "Component-preload.js",
-        id: normalizePath(componentJs),
+        id: normalizePath(componentTs.replace(".ts", ".js")),
         type: "asset",
         source: `sap.ui.require.preload(${JSON.stringify(
           appFiles.reduce<{
