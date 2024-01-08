@@ -2,8 +2,8 @@ import fs, { Dirent } from "fs";
 import path from "path";
 import { EmittedAsset } from "rollup";
 import { ConfigEnv, normalizePath, ResolvedConfig, UserConfig } from "vite";
-import { Ui5ViteAppPluginOptions } from "../index.ts";
 import { transformCode } from "../transform/babel.ts";
+import { Ui5ViteAppPluginOptions } from "../types.ts";
 
 const virtualModuleId = "virtual:@cpro-js/ui5-vite-app-plugin/runtime";
 const resolvedVirtualModuleId = "\0" + virtualModuleId;

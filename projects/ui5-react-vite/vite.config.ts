@@ -2,7 +2,6 @@ import { resolve } from "path";
 import ui5ViteApp from "@cpro-js/ui5-vite-app-plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 import manifest from "./ui5/manifest.json";
 
 const appId = manifest["sap.app"].id;
@@ -29,10 +28,6 @@ export default defineConfig({
     react(),
     ui5ViteApp({
       appId: appId,
-    }),
-    cssInjectedByJsPlugin({
-      relativeCSSInjection: false,
-      styleId: `${appId}-style`,
     }),
   ],
 });
