@@ -9,15 +9,11 @@ const virtualModuleId = "virtual:@cpro-js/ui5-vite-app-plugin/runtime";
 const resolvedVirtualModuleId = "\0" + virtualModuleId;
 
 export class BasePlugin {
-  protected basePath: string;
-
   constructor(
     protected viteConfig: UserConfig | ResolvedConfig,
     protected viteEnv: ConfigEnv,
     protected pluginOptions: Ui5ViteAppPluginOptions,
-  ) {
-    this.basePath = this.addTrailingSlash(viteConfig.base ?? "/");
-  }
+  ) {}
 
   public config = () => {
     const config: Partial<UserConfig> = {
@@ -26,9 +22,10 @@ export class BasePlugin {
       },
       experimental: {
         renderBuiltUrl: (filename, { hostType }) => {
+          const { ui5RuntimeGlobalVariable } = this;
           if (hostType === "js") {
             return {
-              runtime: `window.__vitePublicAssetsURL(${JSON.stringify(filename)})`,
+              runtime: `window["${ui5RuntimeGlobalVariable}"].publicAssetsURL(${JSON.stringify(filename)})`,
             };
           } else {
             // In HTML and CSS we only use relative paths until we craft a clever runtime CSS hack
@@ -42,7 +39,6 @@ export class BasePlugin {
 
   public configResolved(config: ResolvedConfig) {
     this.viteConfig = config;
-    this.basePath = this.addTrailingSlash(this.viteConfig.base ?? this.basePath);
   }
 
   public resolveId = (id: string) => {
@@ -53,10 +49,8 @@ export class BasePlugin {
 
   public load = (id: string) => {
     if (id === resolvedVirtualModuleId) {
-      const appId = this.pluginOptions.appId;
-      const appPath = appId.replace(/\./g, "/");
+      const { basePath, ui5AppId, ui5NamespacePath, ui5RuntimeGlobalVariable } = this;
 
-      // TODO __vitePublicAssetsURL must be unique for each appid
       return transformCode(
         "runtime.js",
         `
@@ -71,19 +65,16 @@ export class BasePlugin {
             return startCb(...args);
           };
 
-          window["UI5_RUNNER@${this.pluginOptions.appId}"] = {
+          window["${ui5RuntimeGlobalVariable}"] = {
             start: function(...args) {
               return startCb(...args);
             },
+            publicAssetsURL: function(filename) {
+              const adjustedPath = typeof sap == 'undefined' ? "${basePath}" + filename : sap.ui.require.toUrl("${ui5NamespacePath}/" + filename);
+              const cacheBustedFilename = typeof sap === 'undefined' || typeof sap.ui.core.AppCacheBuster === 'undefined' ? adjustedPath : sap.ui.core.AppCacheBuster.convertURL(adjustedPath);
+              return cacheBustedFilename;
+            }
           };
-
-          // it is important to set public path for webpack's module loader
-          window.__vitePublicAssetsURL = function(filename) {
-            const adjustedPath = typeof sap == 'undefined' ? "${this.basePath}" + filename : sap.ui.require.toUrl("${appPath}/" + filename);
-            const cacheBustedFilename = typeof sap === 'undefined' || typeof sap.ui.core.AppCacheBuster === 'undefined' ? adjustedPath : sap.ui.core.AppCacheBuster.convertURL(adjustedPath);
-            return cacheBustedFilename;
-          };
-
         `,
       ).trim();
     }
@@ -106,8 +97,7 @@ export class BasePlugin {
     const manifestJson = path.resolve(projectDir, "./ui5/manifest.json");
     const indexUiHtml = path.resolve(projectDir, "./ui5/index-ui5.html");
 
-    const appId = this.pluginOptions.appId;
-    const appPath = appId.replace(/\./g, "/");
+    const { ui5NamespacePath, ui5RuntimeGlobalVariable } = this;
 
     const appFiles: Array<EmittedAsset & { id: string }> = [
       {
@@ -120,7 +110,7 @@ export class BasePlugin {
           transformUi5: true,
           codeToInject: `
             const render = function(...args) {
-              window["UI5_RUNNER@${appId}"].start(...args);
+              window["${ui5RuntimeGlobalVariable}"].start(...args);
             };
           `,
         }).replace(options?.entryFilename ?? "", options?.outputFilename ?? ""),
@@ -145,12 +135,12 @@ export class BasePlugin {
           appFiles.reduce<{
             [file: string]: string;
           }>((map, file) => {
-            map[`${appPath}/${file.name}`] = file.source!.toString();
+            map[`${ui5NamespacePath}/${file.name}`] = file.source!.toString();
             return map;
           }, {}),
           null,
           "\t",
-        )}, "${appPath}/Component-preload");`,
+        )}, "${ui5NamespacePath}/Component-preload");`,
       },
       {
         id: normalizePath(indexUiHtml),
@@ -160,6 +150,42 @@ export class BasePlugin {
         source: fs.readFileSync(indexUiHtml),
       },
     ];
+  }
+
+  /**
+   * Returns the used base path in vite.config.ts
+   * Note: This will only be used in non-UI5 environments
+   *
+   * @protected
+   */
+  protected get basePath(): string {
+    return this.addTrailingSlash(this.viteConfig.base ?? "/");
+  }
+
+  /**
+   * Returns the Application Id used by UI5
+   * Example: ui5.react.example
+   * @protected
+   */
+  protected get ui5AppId(): string {
+    return this.pluginOptions.appId;
+  }
+
+  /**
+   * Returns the used UI5 namespace as path (UI5 App Id transformed to path)
+   * Example: ui5/react/example
+   * @protected
+   */
+  protected get ui5NamespacePath(): string {
+    return this.ui5AppId.replace(/\./g, "/");
+  }
+
+  /**
+   * Returns the used global variable name to register UI5/vite runtime code
+   * @protected
+   */
+  protected get ui5RuntimeGlobalVariable(): string {
+    return `UI5_RUNNER@${this.ui5AppId}`;
   }
 
   private addTrailingSlash(path: string) {
