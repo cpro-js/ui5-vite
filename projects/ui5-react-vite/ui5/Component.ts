@@ -57,9 +57,7 @@ export default class Component extends UIComponent {
       el.dir = rtl ? "rtl" : "ltr";
 
       this.unmountApp = render(el, {
-        // @ts-ignore
         component: this,
-        resolveUri: (path: string) => this.resolveUri(path),
       });
     } catch (e: Error | unknown) {
       console.error(e);
@@ -80,6 +78,9 @@ export default class Component extends UIComponent {
     return sap.ushell != null;
   }
 
+  /**
+   * Pass the relative path of your AJAX call and get a fully qualified URL back which works in all environments (local development, standalone, launchpad, etc.).
+   */
   public resolveUri(uri: string): string {
     return this.getManifestObject().resolveUri(uri);
   }
