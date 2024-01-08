@@ -11,7 +11,7 @@ export class BuildPlugin extends BasePlugin {
     bundle: OutputBundle,
     isWrite: boolean,
   ) => {
-    const ui5Files = this.generateUI5Files(context, bundle);
+    const ui5Files = await this.generateUI5Files(context, bundle);
 
     // enhance Vite's bundle to build the whole cache buster json
     const bundleUI5Enhanced: OutputBundle = {
@@ -35,7 +35,10 @@ export class BuildPlugin extends BasePlugin {
     }
   };
 
-  private generateUI5Files(context: PluginContext, bundle: OutputBundle): Array<EmittedAsset & { id: string }> {
+  private async generateUI5Files(
+    context: PluginContext,
+    bundle: OutputBundle,
+  ): Promise<Array<EmittedAsset & { id: string }>> {
     const ui5Entry = Array.from(context.getModuleIds())
       .map((file) => context.getModuleInfo(file))
       .filter((mod): mod is ModuleInfo => !!mod)
@@ -58,7 +61,7 @@ export class BuildPlugin extends BasePlugin {
     // TODO handle CSS files --> 3rd party plugin for now
     const cssFiles = ui5EntryOuput.viteMetadata!.importedAssets;
 
-    const ui5Files = this.getUi5Files({
+    const ui5Files = await this.getUi5Files({
       entryFilename: normalizePath(ui5Entry.id).replace(normalizePath(this.viteConfig.root ?? ""), ""),
       outputFilename: ui5EntryOuput.fileName,
     });

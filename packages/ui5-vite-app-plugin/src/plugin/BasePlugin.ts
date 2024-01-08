@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs, { Dirent } from "fs";
 import path from "path";
 import { EmittedAsset } from "rollup";
 import { ConfigEnv, normalizePath, ResolvedConfig, UserConfig } from "vite";
@@ -80,7 +80,7 @@ export class BasePlugin {
     }
   };
 
-  protected getUi5Files(options?: {
+  protected async getUi5Files(options?: {
     /**
      * Original filename, e.g. main.tsx
      */
@@ -89,13 +89,13 @@ export class BasePlugin {
      * Processed filename, e.g. main.[1156].js
      */
     outputFilename?: string;
-  }): Array<EmittedAsset & { id: string }> {
-    // TODO UI5 template root directory
+  }): Promise<Array<EmittedAsset & { id: string }>> {
     const projectDir = path.resolve(this.viteConfig.root!, "..");
+    const ui5Dir = path.join(projectDir, "ui5");
 
-    const componentTs = path.resolve(projectDir, "./ui5/Component.ts");
-    const manifestJson = path.resolve(projectDir, "./ui5/manifest.json");
-    const indexUiHtml = path.resolve(projectDir, "./ui5/index-ui5.html");
+    const componentTs = path.join(ui5Dir, "./Component.ts");
+    const manifestJson = path.resolve(ui5Dir, "./manifest.json");
+    const htmlPaths = await this.getFilesInDir(ui5Dir, [".html"]);
 
     const { ui5NamespacePath, ui5RuntimeGlobalVariable } = this;
 
@@ -124,6 +124,14 @@ export class BasePlugin {
       },
     ];
 
+    const htmlFiles: Array<EmittedAsset & { id: string }> = htmlPaths.map((p) => ({
+      id: normalizePath(p),
+      name: path.basename(p),
+      fileName: path.basename(p),
+      type: "asset",
+      source: fs.readFileSync(p),
+    }));
+
     return [
       ...appFiles,
       {
@@ -142,13 +150,7 @@ export class BasePlugin {
           "\t",
         )}, "${ui5NamespacePath}/Component-preload");`,
       },
-      {
-        id: normalizePath(indexUiHtml),
-        name: "index-ui5.html",
-        fileName: "index-ui5.html",
-        type: "asset",
-        source: fs.readFileSync(indexUiHtml),
-      },
+      ...htmlFiles,
     ];
   }
 
@@ -190,5 +192,23 @@ export class BasePlugin {
 
   private addTrailingSlash(path: string) {
     return path.replace(/\/?$/, "/");
+  }
+
+  /**
+   * Returns all files in folder (first level)
+   *
+   *
+   * @param folderPath
+   * @param extensions
+   * @private
+   */
+  private async getFilesInDir(folderPath: string, extensions: Array<string>): Promise<string[]> {
+    const files = await new Promise<Dirent[]>((resolve, reject) =>
+      fs.readdir(folderPath, { withFileTypes: true }, (error, files) => (error ? reject(error) : resolve(files))),
+    );
+
+    const filteredFiles = files.filter((f) => f.isFile()).filter((f) => extensions.includes(path.extname(f.name)));
+
+    return filteredFiles.map((f) => path.join(folderPath, f.name));
   }
 }

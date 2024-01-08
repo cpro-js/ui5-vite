@@ -71,18 +71,18 @@ export class ServePlugin extends BasePlugin {
     });
   }
 
-  buildStart(context: PluginContext) {
-    this.files = this.getUi5Files();
+  async buildStart(context: PluginContext) {
+    this.files = await this.getUi5Files();
     this.files.forEach((f) => context.addWatchFile(f.id));
   }
 
-  watchChange(id: string) {
+  async watchChange(id: string) {
     const changedFile = this.files.find((f) => f.id === id);
     if (!changedFile) {
       return;
     }
     // files changed --> read and process all UI5 files again
-    this.files = this.getUi5Files();
+    this.files = await this.getUi5Files();
   }
 
   handleHotUpdate(context: HmrContext) {
