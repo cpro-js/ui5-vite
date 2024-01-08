@@ -134,9 +134,15 @@ export default class Component extends UIComponent {
   private _loadScriptModule(srcUrl: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const head = document.head || document.getElementsByTagName("head")[0];
-      const script = document.createElement("script");
+      const allScripts = [...head.getElementsByTagName("script")];
+      let script = document.createElement("script");
       script.type = "module";
       script.src = srcUrl;
+      if (allScripts.some((s) => s.src === script.src)) {
+        // script was loaded earlier, let's assume it's loaded successfully
+        return resolve();
+      }
+
       script.onload = function () {
         this.onerror = this.onload = null;
         resolve();
