@@ -3,7 +3,7 @@ import path from "path";
 import { EmittedAsset } from "rollup";
 import { ConfigEnv, normalizePath, ResolvedConfig, UserConfig } from "vite";
 import { Ui5ViteAppPluginOptions } from "../index.ts";
-import { transformUi5Code } from "../transform/babel.ts";
+import { transformCode } from "../transform/babel.ts";
 
 const virtualModuleId = "virtual:@cpro-js/ui5-vite-app-plugin/runtime";
 const resolvedVirtualModuleId = "\0" + virtualModuleId;
@@ -57,7 +57,9 @@ export class BasePlugin {
       const appPath = appId.replace(/\./g, "/");
 
       // TODO __vitePublicAssetsURL must be unique for each appid
-      return `
+      return transformCode(
+        "runtime.js",
+        `
           let startCb = function () {
             throw new Error("No App registered!");
           };
@@ -79,12 +81,11 @@ export class BasePlugin {
           window.__vitePublicAssetsURL = function(filename) {
             const adjustedPath = typeof sap == 'undefined' ? "${this.basePath}" + filename : sap.ui.require.toUrl("${appPath}/" + filename);
             const cacheBustedFilename = typeof sap === 'undefined' || typeof sap.ui.core.AppCacheBuster === 'undefined' ? adjustedPath : sap.ui.core.AppCacheBuster.convertURL(adjustedPath);
-
-            console.log("__vitePublicAssetsURL", filename, cacheBustedFilename);
             return cacheBustedFilename;
           };
 
-          `.trim();
+        `,
+      ).trim();
     }
   };
 
@@ -114,8 +115,14 @@ export class BasePlugin {
         name: "Component.js",
         fileName: "Component.js",
         type: "asset",
-        source: transformUi5Code("Component.ts", fs.readFileSync(componentTs).toString(), {
-          appId: appId,
+        source: transformCode("Component.ts", fs.readFileSync(componentTs).toString(), {
+          removeImport: virtualModuleId,
+          transformUi5: true,
+          codeToInject: `
+            const render = function(...args) {
+              window["UI5_RUNNER@${appId}"].start(...args);
+            };
+          `,
         }).replace(options?.entryFilename ?? "", options?.outputFilename ?? ""),
       },
       {
