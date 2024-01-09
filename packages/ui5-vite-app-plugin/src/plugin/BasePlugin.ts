@@ -61,9 +61,7 @@ export class BasePlugin {
         id,
         external: true,
       };
-    }
-    // TODO add base path here?
-    else if (id === "/Component.ts") {
+    } else if (id === "/Component.ts") {
       return this.getUi5FileId("Component.ts");
     }
   };
