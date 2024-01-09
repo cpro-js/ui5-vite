@@ -20,6 +20,7 @@ export default defineConfig({
         resolve(__dirname, "src/index.html"),
         // entry point for UI5
         resolve(__dirname, "src/main.tsx"),
+        resolve(__dirname, "ui5/Component.ts"),
       ],
     },
   },

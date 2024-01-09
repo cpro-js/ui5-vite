@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { parse } from "url";
-import { EmittedAsset, PluginContext } from "rollup";
+import { EmittedAsset, NormalizedInputOptions, PluginContext } from "rollup";
 import { HmrContext, normalizePath, PreviewServer, ViteDevServer } from "vite";
 import { BasePlugin } from "./BasePlugin.ts";
 
@@ -10,36 +10,42 @@ export class ServePlugin extends BasePlugin {
 
   configureServer = async (server: ViteDevServer) => {
     // serve all virtual files
-    return () => {
-      server.middlewares.use(async (req, res, next) => {
-        if (req.method !== "GET" || !req.originalUrl) {
-          return next();
-        }
-        const { pathname } = parse(req.originalUrl, false);
-        if (!pathname) {
-          return next();
-        }
-        const fileToServe = this.files.find(
-          (f) => !!f.fileName && normalizePath(pathname) === this.basePath + normalizePath(f.fileName),
-        );
+    server.middlewares.use(async (req, res, next) => {
+      if (req.method !== "GET" || !req.originalUrl) {
+        return next();
+      }
+      const { pathname } = parse(req.originalUrl, false);
+      if (!pathname) {
+        return next();
+      }
 
-        if (!fileToServe || fileToServe.type !== "asset" || !fileToServe.fileName || !fileToServe.source) {
-          return next();
-        }
+      // map /Component.js to Component.ts cause Vite serves only original filenames
+      if (pathname === this.basePath + "Component.js") {
+        req.url = this.basePath + "Component.ts";
+        req.originalUrl = this.basePath + "Component.ts";
+        return next();
+      }
 
-        const { data, mimeType } = await this.getFile({
-          file: fileToServe as Required<EmittedAsset>,
-          url: pathname,
-          server: server,
-        });
+      // try serve all other UI5 files (manifest.json, html files)
+      const fileToServe = this.files.find(
+        (f) => !!f.fileName && normalizePath(pathname) === this.basePath + normalizePath(f.fileName),
+      );
+      if (!fileToServe || fileToServe.type !== "asset" || !fileToServe.fileName || !fileToServe.source) {
+        return next();
+      }
 
-        if (mimeType) {
-          res.setHeader("Content-Type", mimeType);
-        }
-        res.statusCode = 200;
-        res.end(data);
+      const { data, mimeType } = await this.getFile({
+        file: fileToServe as Required<EmittedAsset>,
+        url: pathname,
+        server: server,
       });
-    };
+
+      if (mimeType) {
+        res.setHeader("Content-Type", mimeType);
+      }
+      res.statusCode = 200;
+      res.end(data);
+    });
   };
 
   configurePreviewServer(server: PreviewServer) {
@@ -71,18 +77,18 @@ export class ServePlugin extends BasePlugin {
     });
   }
 
-  async buildStart(context: PluginContext) {
-    this.files = await this.getUi5Files();
+  async buildStart(context: PluginContext, options: NormalizedInputOptions) {
+    this.files = await this.getAdditionalUi5Files();
     this.files.forEach((f) => context.addWatchFile(f.id));
   }
 
-  async watchChange(id: string) {
+  async watchChange(context: PluginContext, id: string) {
     const changedFile = this.files.find((f) => f.id === id);
     if (!changedFile) {
       return;
     }
-    // files changed --> read and process all UI5 files again
-    this.files = await this.getUi5Files();
+    // files changed --> reload all UI5 files again
+    this.files = await this.getAdditionalUi5Files();
   }
 
   handleHotUpdate(context: HmrContext) {

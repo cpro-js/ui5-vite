@@ -1,75 +1,99 @@
 import crypto from "crypto";
-import path from "path";
-import { EmittedAsset, ModuleInfo, NormalizedOutputOptions, OutputAsset, OutputBundle, PluginContext } from "rollup";
+import {
+  NormalizedInputOptions,
+  NormalizedOutputOptions,
+  OutputAsset,
+  OutputBundle,
+  OutputChunk,
+  PluginContext,
+} from "rollup";
 import { normalizePath } from "vite";
 import { BasePlugin } from "./BasePlugin.ts";
 
 export class BuildPlugin extends BasePlugin {
+  async buildStart(context: PluginContext, options: NormalizedInputOptions) {
+    const files = await this.getAdditionalUi5Files();
+    files.forEach((f) => context.emitFile(f));
+  }
+
   generateBundle = async (
     context: PluginContext,
     options: NormalizedOutputOptions,
     bundle: OutputBundle,
     isWrite: boolean,
   ) => {
-    const ui5Files = await this.generateUI5Files(context, bundle);
+    const allEntries = Object.values(bundle)
+      .filter((output): output is OutputChunk => output.type === "chunk")
+      .filter((outputChunk) => outputChunk.isEntry);
+
+    const ui5JsEntry = allEntries.find((outputChunk) => outputChunk.name === "main");
+
+    if (!ui5JsEntry) {
+      context.error("UI5 file not found: main.js/ts");
+    }
+    const ui5Component = allEntries.find((outputChunk) => outputChunk.name === "Component");
+
+    if (!ui5Component) {
+      context.error("UI5 file not found: Component.js/ts");
+    }
+
+    const entryFileName = normalizePath(ui5JsEntry.facadeModuleId!).replace(
+      normalizePath(this.viteConfig.root ?? ""),
+      "",
+    );
+
+    ui5Component.code = ui5Component.code.replace(entryFileName, ui5JsEntry.fileName);
+    ui5Component.map = null;
+
+    const componentPreload = this.generateComponentPreload(context, bundle);
 
     // enhance Vite's bundle to build the whole cache buster json
     const bundleUI5Enhanced: OutputBundle = {
       ...bundle,
-      ...ui5Files.reduce<OutputBundle>(
-        (map, file) => ({
-          ...map,
-          [file.fileName ?? file.name ?? ""]: {
-            ...file,
-            needsCodeReference: false,
-          } as OutputAsset,
-        }),
-        {},
-      ),
+      [componentPreload.fileName]: componentPreload,
     };
+
     const cacheBuster = this.generateCacheBuster(context, bundleUI5Enhanced);
 
     // emit all files
-    for (const file of [...ui5Files, cacheBuster]) {
+    for (const file of [componentPreload, cacheBuster]) {
       context.emitFile(file);
     }
   };
 
-  private async generateUI5Files(
-    context: PluginContext,
-    bundle: OutputBundle,
-  ): Promise<Array<EmittedAsset & { id: string }>> {
-    const ui5Entry = Array.from(context.getModuleIds())
-      .map((file) => context.getModuleInfo(file))
-      .filter((mod): mod is ModuleInfo => !!mod)
-      .filter((mod) => mod.isEntry)
-      .filter((mod) => [".tsx", ".ts", ".js"].includes(path.extname(mod.id)))
-      .pop();
+  private generateComponentPreload(context: PluginContext, bundle: OutputBundle): OutputAsset {
+    const allUI5Chunks = Object.values(bundle)
+      .filter((output): output is OutputChunk => output.type === "chunk")
+      .filter((outputChunk) => outputChunk.isEntry)
+      .filter((output) => output.name === "Component");
 
-    if (!ui5Entry) {
-      context.error("UI5 Entry file not found!");
-    }
+    const allUI5Assets = Object.values(bundle)
+      .filter((output): output is OutputAsset => output.type === "asset")
+      .filter((output) => output.fileName === "manifest.json");
 
-    const ui5EntryOuput = Object.values(bundle).find(
-      (output) => output.type === "chunk" && output.facadeModuleId === ui5Entry.id,
-    );
+    const appFiles = [...allUI5Chunks, ...allUI5Assets];
 
-    if (!ui5EntryOuput || ui5EntryOuput.type !== "chunk") {
-      context.error("Output file not found!");
-    }
+    const { ui5NamespacePath } = this;
 
-    // TODO handle CSS files --> 3rd party plugin for now
-    const cssFiles = ui5EntryOuput.viteMetadata!.importedAssets;
-
-    const ui5Files = await this.getUi5Files({
-      entryFilename: normalizePath(ui5Entry.id).replace(normalizePath(this.viteConfig.root ?? ""), ""),
-      outputFilename: ui5EntryOuput.fileName,
-    });
-
-    return ui5Files;
+    return {
+      name: "Component-preload.js",
+      fileName: "Component-preload.js",
+      type: "asset",
+      needsCodeReference: false,
+      source: `sap.ui.require.preload(${JSON.stringify(
+        appFiles.reduce<{
+          [file: string]: string;
+        }>((map, file) => {
+          map[`${ui5NamespacePath}/${file.fileName}`] = file.type === "chunk" ? file.code : file.source.toString();
+          return map;
+        }, {}),
+        null,
+        "\t",
+      )}, "${ui5NamespacePath}/Component-preload");`,
+    };
   }
 
-  private generateCacheBuster(context: PluginContext, bundle: OutputBundle): EmittedAsset {
+  private generateCacheBuster(context: PluginContext, bundle: OutputBundle): OutputAsset {
     const hashes = Object.entries(bundle).map(([filename, output]) => {
       const hasher = crypto.createHash("sha1");
       hasher.update(output.type === "asset" ? output.source : output.code);
@@ -89,6 +113,7 @@ export class BuildPlugin extends BasePlugin {
     return {
       type: "asset",
       name: "sap-ui-cachebuster-info.json",
+      needsCodeReference: false,
       fileName: "sap-ui-cachebuster-info.json",
       source: JSON.stringify(cacheBusterInfo, null, 2),
     };

@@ -1,6 +1,6 @@
 import fs, { Dirent } from "fs";
 import path from "path";
-import { EmittedAsset } from "rollup";
+import { EmittedAsset, PluginContext } from "rollup";
 import { ConfigEnv, normalizePath, ResolvedConfig, UserConfig } from "vite";
 import { transformCode } from "../transform/babel.ts";
 import { Ui5ViteAppPluginOptions } from "../types.ts";
@@ -19,6 +19,18 @@ export class BasePlugin {
     const config: Partial<UserConfig> = {
       build: {
         cssCodeSplit: true,
+        rollupOptions: {
+          output: {
+            entryFileNames: (info) => {
+              // prevent UI5 files from being hashed
+              if (info.isEntry && info.facadeModuleId?.endsWith("Component.ts")) {
+                return "[name].js";
+              }
+              // everything else is safe to transform
+              return "[name]-[hash].js";
+            },
+          },
+        },
       },
       experimental: {
         renderBuiltUrl: (filename, { hostType }) => {
@@ -37,23 +49,33 @@ export class BasePlugin {
     return config;
   };
 
-  public configResolved(config: ResolvedConfig) {
+  public configResolved = (config: ResolvedConfig) => {
     this.viteConfig = config;
-  }
+  };
 
-  public resolveId = (id: string) => {
+  public resolveId = async (context: PluginContext, id: string) => {
     if (id === virtualModuleId) {
       return resolvedVirtualModuleId;
+    } else if (id.startsWith("sap/")) {
+      return {
+        id,
+        external: true,
+      };
+    }
+    // TODO add base path here?
+    else if (id === "/Component.ts") {
+      return this.getUi5FileId("Component.ts");
     }
   };
 
   public load = (id: string) => {
-    if (id === resolvedVirtualModuleId) {
-      const { basePath, ui5AppId, ui5NamespacePath, ui5RuntimeGlobalVariable } = this;
+    switch (true) {
+      case id === resolvedVirtualModuleId: {
+        const { basePath, ui5AppId, ui5NamespacePath, ui5RuntimeGlobalVariable } = this;
 
-      return transformCode(
-        "runtime.js",
-        `
+        return transformCode(
+          "runtime.js",
+          `
           let startCb = function () {
             throw new Error("No App registered!");
           };
@@ -76,82 +98,57 @@ export class BasePlugin {
             }
           };
         `,
-      ).trim();
+        ).trim();
+      }
     }
   };
 
-  protected async getUi5Files(options?: {
-    /**
-     * Original filename, e.g. main.tsx
-     */
-    entryFilename?: string;
-    /**
-     * Processed filename, e.g. main.[1156].js
-     */
-    outputFilename?: string;
-  }): Promise<Array<EmittedAsset & { id: string }>> {
-    const projectDir = path.resolve(this.viteConfig.root!, "..");
-    const ui5Dir = path.join(projectDir, "ui5");
+  public transform(code: string, id: string) {
+    if (this.getUi5FileId("Component.ts") === id) {
+      const { ui5RuntimeGlobalVariable } = this;
 
-    const componentTs = path.join(ui5Dir, "./Component.ts");
-    const manifestJson = path.resolve(ui5Dir, "./manifest.json");
-    const htmlPaths = await this.getFilesInDir(ui5Dir, [".html"]);
-
-    const { ui5NamespacePath, ui5RuntimeGlobalVariable } = this;
-
-    const appFiles: Array<EmittedAsset & { id: string }> = [
-      {
-        id: normalizePath(componentTs),
-        name: "Component.js",
-        fileName: "Component.js",
-        type: "asset",
-        source: transformCode("Component.ts", fs.readFileSync(componentTs).toString(), {
-          removeImport: virtualModuleId,
-          transformUi5: true,
-          codeToInject: `
+      return transformCode(id, code, {
+        removeImport: virtualModuleId,
+        transformUi5: true,
+        codeToInject: `
             const render = function(...args) {
               window["${ui5RuntimeGlobalVariable}"].start(...args);
             };
           `,
-        }).replace(options?.entryFilename ?? "", options?.outputFilename ?? ""),
-      },
+      });
+    }
+  }
+
+  protected async getAdditionalUi5Files(): Promise<Array<EmittedAsset & { id: string }>> {
+    const projectDir = path.resolve(this.viteConfig.root!, "..");
+    const ui5Dir = path.join(projectDir, "ui5");
+
+    const manifestJson = path.resolve(ui5Dir, "./manifest.json");
+    const htmlPaths = await this.getFilesInDir(ui5Dir, [".html"]);
+
+    return [
       {
         id: normalizePath(manifestJson),
         name: "manifest.json",
         fileName: "manifest.json",
         type: "asset",
-        source: fs.readFileSync(manifestJson),
+        source: fs.readFileSync(manifestJson).toString(),
       },
-    ];
-
-    const htmlFiles: Array<EmittedAsset & { id: string }> = htmlPaths.map((p) => ({
-      id: normalizePath(p),
-      name: path.basename(p),
-      fileName: path.basename(p),
-      type: "asset",
-      source: fs.readFileSync(p),
-    }));
-
-    return [
-      ...appFiles,
-      {
-        name: "Component-preload.js",
-        fileName: "Component-preload.js",
-        id: normalizePath(componentTs.replace(".ts", ".js")),
+      ...htmlPaths.map<EmittedAsset & { id: string }>((p) => ({
+        id: normalizePath(p),
+        name: path.basename(p),
+        fileName: path.basename(p),
         type: "asset",
-        source: `sap.ui.require.preload(${JSON.stringify(
-          appFiles.reduce<{
-            [file: string]: string;
-          }>((map, file) => {
-            map[`${ui5NamespacePath}/${file.name}`] = file.source!.toString();
-            return map;
-          }, {}),
-          null,
-          "\t",
-        )}, "${ui5NamespacePath}/Component-preload");`,
-      },
-      ...htmlFiles,
+        source: fs.readFileSync(p).toString(),
+      })),
     ];
+  }
+
+  protected getUi5FileId(filename: string): string {
+    const projectDir = path.resolve(this.viteConfig.root!, "..");
+    const ui5Dir = path.join(projectDir, "ui5");
+
+    return normalizePath(path.join(ui5Dir, filename));
   }
 
   /**

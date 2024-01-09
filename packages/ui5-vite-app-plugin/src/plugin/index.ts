@@ -24,17 +24,23 @@ export default (options: Ui5ViteAppPluginOptions): Plugin => {
     load(id) {
       return plugin?.load(id);
     },
+    transform(code, id) {
+      return plugin && "transform" in plugin ? plugin.transform(code, id) : undefined;
+    },
     resolveId(id) {
-      return plugin?.resolveId(id);
+      return plugin?.resolveId(this, id);
     },
-    generateBundle(options, bundle, isWrite) {
-      return plugin && "generateBundle" in plugin ? plugin.generateBundle(this, options, bundle, isWrite) : undefined;
+    buildStart(options) {
+      return plugin && "buildStart" in plugin ? plugin.buildStart(this, options) : undefined;
     },
-    buildStart() {
-      return plugin && "buildStart" in plugin ? plugin.buildStart(this) : undefined;
+    generateBundle: {
+      order: "post", // needs to run as last to generate proper Component.preload and cache buster files
+      handler(options, bundle, isWrite) {
+        return plugin && "generateBundle" in plugin ? plugin.generateBundle(this, options, bundle, isWrite) : undefined;
+      },
     },
     watchChange(id, change) {
-      return plugin && "watchChange" in plugin ? plugin.watchChange(id) : undefined;
+      return plugin && "watchChange" in plugin ? plugin.watchChange(this, id) : undefined;
     },
     handleHotUpdate(context) {
       return plugin && "handleHotUpdate" in plugin ? plugin.handleHotUpdate(context) : undefined;
