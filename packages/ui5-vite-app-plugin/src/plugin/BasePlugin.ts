@@ -79,21 +79,29 @@ export class BasePlugin {
           };
           export const register = function (cb) {
             startCb = cb;
+
+            if (window["${ui5RuntimeGlobalVariable}"].whenRegistered) {
+              const registerFn = window["${ui5RuntimeGlobalVariable}"].whenRegistered();
+              delete window["${ui5RuntimeGlobalVariable}"].whenRegistered;
+            }
           };
 
           export const render = function (...args) {
             return startCb(...args);
           };
 
-          window["${ui5RuntimeGlobalVariable}"] = {
-            start: function(...args) {
-              return startCb(...args);
-            },
-            publicAssetsURL: function(filename) {
+          if (!window["${ui5RuntimeGlobalVariable}"]) {
+            window["${ui5RuntimeGlobalVariable}"] = {};
+          }
+
+          window["${ui5RuntimeGlobalVariable}"].start = function(...args) {
+            return startCb(...args);
+          };
+
+          window["${ui5RuntimeGlobalVariable}"].publicAssetsURL = function(filename) {
               const adjustedPath = typeof sap == 'undefined' ? "${basePath}" + filename : sap.ui.require.toUrl("${ui5NamespacePath}/" + filename);
               const cacheBustedFilename = typeof sap === 'undefined' || typeof sap.ui.core.AppCacheBuster === 'undefined' ? adjustedPath : sap.ui.core.AppCacheBuster.convertURL(adjustedPath);
               return cacheBustedFilename;
-            }
           };
         `,
         ).trim();
@@ -110,7 +118,14 @@ export class BasePlugin {
         transformUi5: true,
         codeToInject: `
             const render = function(...args) {
-              window["${ui5RuntimeGlobalVariable}"].start(...args);
+              if (!window["${ui5RuntimeGlobalVariable}"] || typeof window["${ui5RuntimeGlobalVariable}"].start === "undefined") {
+                window["${ui5RuntimeGlobalVariable}"] = {};
+                window["${ui5RuntimeGlobalVariable}"].whenRegistered = function() {
+                  window["${ui5RuntimeGlobalVariable}"].start(...args);
+                }
+              } else {
+                window["${ui5RuntimeGlobalVariable}"].start(...args);
+              }
             };
           `,
       });
