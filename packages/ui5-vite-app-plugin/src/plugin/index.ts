@@ -24,8 +24,12 @@ export default (options: Ui5ViteAppPluginOptions): Plugin => {
     load(id) {
       return plugin?.load(id);
     },
-    transform(code, id) {
-      return plugin && "transform" in plugin ? plugin.transform(code, id) : undefined;
+    transform: {
+      // our transform needs to run at first, cause UI5 transformation needs raw files (e.g. namespace determination)
+      order: "pre",
+      handler(code, id) {
+        return plugin && "transform" in plugin ? plugin.transform(code, id) : undefined;
+      },
     },
     resolveId(id) {
       return plugin?.resolveId(this, id);
