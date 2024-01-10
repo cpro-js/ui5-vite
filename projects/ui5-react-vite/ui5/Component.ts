@@ -11,14 +11,15 @@ import { render, RenderOptions } from "virtual:@cpro-js/ui5-vite-app-plugin/runt
  * @namespace react.ui5.vite
  */
 export default class Component extends UIComponent {
-  private eventBus!: EventBus;
-  private scriptPromise!: Promise<void>;
-  private appElementId!: string;
+  private readonly eventBus: EventBus;
+  private readonly scriptPromise: Promise<void>;
+  private readonly appElementId: string;
   private unmountApp?: () => void;
 
   public static metadata = {
     manifest: "json",
   };
+
   /**
    * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
    */
@@ -73,7 +74,6 @@ export default class Component extends UIComponent {
   }
 
   public destroy() {
-    console.log("destroy");
     this.unmountApp?.();
     this.eventBus.destroy();
     sap.ui.getCore().detachThemeChanged(this._onThemeChanged, this);
@@ -96,10 +96,16 @@ export default class Component extends UIComponent {
     return this._parseShellHash(new HashChanger().getHash());
   }
 
-  public setRelatedApps(relatedApps: Array<{ title: string; subtitle?: string; icon?: string; intent: string }>) {
-    return this.getService("ShellUIService").then(function (service: sap.ushell.ui5service.ShellUIService) {
-      service.setRelatedApps(relatedApps);
-    });
+  public async setRelatedApps(
+    relatedApps: Array<{
+      title: string;
+      subtitle?: string;
+      icon?: string;
+      intent: string;
+    }>,
+  ): Promise<void> {
+    const service = await this.getService("ShellUIService");
+    service.setRelatedApps(relatedApps);
   }
 
   /**
@@ -108,26 +114,25 @@ export default class Component extends UIComponent {
    *
    * @param title
    */
-  public setShellTitle(title: string) {
+  public async setShellTitle(title: string): Promise<void> {
     if (!this.isLaunchpad()) {
       return;
     }
 
-    return this.getService("ShellUIService").then(function (service: sap.ushell.ui5service.ShellUIService) {
-      service.setTitle(title);
-    });
+    const service: sap.ushell.ui5service.ShellUIService = await this.getService("ShellUIService");
+    service.setTitle(title);
   }
 
-  public setBackNavigation(cb: () => void) {
+  public async setBackNavigation(cb: () => void): Promise<void> {
     if (!this.isLaunchpad()) {
       return;
     }
 
-    return this.getService("ShellUIService").then(function (service: sap.ushell.ui5service.ShellUIService) {
-      // @ts-ignore: incomplete types
-      service.setBackNavigation(function () {
-        cb();
-      });
+    const service: sap.ushell.ui5service.ShellUIService & {
+      setBackNavigation: (cb: () => void) => void;
+    } = await this.getService("ShellUIService");
+    service.setBackNavigation(function () {
+      cb();
     });
   }
 
