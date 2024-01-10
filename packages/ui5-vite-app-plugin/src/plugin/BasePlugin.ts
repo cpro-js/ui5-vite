@@ -1,6 +1,6 @@
 import fs, { Dirent } from "fs";
 import path from "path";
-import { EmittedAsset, PluginContext } from "rollup";
+import { EmittedAsset, PluginContext, SourceDescription } from "rollup";
 import { ConfigEnv, normalizePath, ResolvedConfig, UserConfig } from "vite";
 import { transformCode } from "../transform/babel.ts";
 import { Ui5ViteAppPluginOptions } from "../types.ts";
@@ -104,12 +104,12 @@ export class BasePlugin {
               return cacheBustedFilename;
           };
         `,
-        ).trim();
+        ).code;
       }
     }
   };
 
-  public transform(code: string, id: string) {
+  public transform(code: string, id: string): string | Partial<SourceDescription> | undefined {
     if (this.getUi5FileId("Component.ts") === id) {
       const { ui5RuntimeGlobalVariable } = this;
 

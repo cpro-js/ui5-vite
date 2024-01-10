@@ -5,6 +5,7 @@ import presetTypescript from "@babel/preset-typescript";
 // @ts-ignore
 import transformUI5 from "babel-plugin-transform-modules-ui5";
 import removeImportsPlugin, { Options as RemoveImportsOptions } from "babel-plugin-transform-remove-imports";
+import { SourceDescription } from "rollup";
 import { injectCodePlugin, InjectCodePluginOptions } from "./plugin/injectCodePlugin.ts";
 
 export const transformCode = (
@@ -15,7 +16,7 @@ export const transformCode = (
     transformUi5?: boolean;
     codeToInject?: string;
   },
-): string => {
+): Partial<SourceDescription> => {
   const result = babel.transform(code, {
     filename: filename,
     plugins: ([] as PluginItem[]).concat(
@@ -49,5 +50,8 @@ export const transformCode = (
     throw new Error("Something went wrong!");
   }
 
-  return result.code ?? "";
+  return {
+    code: result.code ?? "",
+    map: result.map,
+  };
 };
