@@ -3,6 +3,8 @@ import presetEnv, { Options as PresetEnvOptions } from "@babel/preset-env";
 // @ts-ignore
 import presetTypescript from "@babel/preset-typescript";
 // @ts-ignore
+import asyncToPromises from "babel-plugin-transform-async-to-promises";
+// @ts-ignore
 import transformUI5 from "babel-plugin-transform-modules-ui5";
 import removeImportsPlugin, { Options as RemoveImportsOptions } from "babel-plugin-transform-remove-imports";
 import { SourceDescription } from "rollup";
@@ -21,6 +23,14 @@ export const transformCode = (
     filename: filename,
     plugins: ([] as PluginItem[]).concat(
       options?.removeImport ? [[removeImportsPlugin, <RemoveImportsOptions>{ test: options.removeImport }]] : [],
+      [
+        [
+          asyncToPromises,
+          {
+            inlineHelpers: true,
+          },
+        ],
+      ],
       options?.transformUi5
         ? [
             [

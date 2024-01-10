@@ -1506,6 +1506,7 @@ __metadata:
     "@types/babel__preset-env": "npm:^7.9.6"
     "@types/node": "npm:^20.10.6"
     "@types/normalize-path": "npm:^3.0.2"
+    babel-plugin-transform-async-to-promises: "npm:^0.8.18"
     babel-plugin-transform-modules-ui5: "npm:^7.2.6"
     babel-plugin-transform-remove-imports: "npm:^1.7.1"
     normalize-path: "npm:^3.0.0"
@@ -2666,6 +2667,13 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.4.0 || ^8.0.0-0 <8.0.0
   checksum: 0b903f5fe2f8c487b4260935dfe60bd9a95bcaee7ae63958f063045093b16d4e8288c232199d411261300aa21f6b106a3cb83c42cc996de013b337f5825a79fe
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-async-to-promises@npm:^0.8.18":
+  version: 0.8.18
+  resolution: "babel-plugin-transform-async-to-promises@npm:0.8.18"
+  checksum: 67575a57e1a2cef91ad7273d00687f4cf03891b1398ac79dec906f246926fc8ba84ddcbcda47538356c9d919570381e10a5d2b1b260344478cec86723d284905
   languageName: node
   linkType: hard
 
