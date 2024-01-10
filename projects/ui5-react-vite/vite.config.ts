@@ -8,6 +8,7 @@ const appId = manifest["sap.app"].id;
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  appType: "mpa", // disables history api fallback to index.html
   base: "/",
   root: resolve(__dirname, "src"),
   publicDir: resolve(__dirname, "public"),
