@@ -4,8 +4,10 @@
   "type": "module",
   "exports": {
     "types": "./dist/ui5-vite-app-plugin.d.ts",
-    "import": "./dist/index.js"
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
   },
+  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/ui5-vite-app-plugin.d.ts",
   "files": [
