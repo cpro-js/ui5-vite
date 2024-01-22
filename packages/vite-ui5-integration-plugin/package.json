@@ -1,15 +1,15 @@
 {
-  "name": "@cpro-js/ui5-vite-app-plugin",
+  "name": "@cpro-js/vite-ui5-integration-plugin",
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    "types": "./dist/ui5-vite-app-plugin.d.ts",
+    "types": "./dist/vite-ui5-integration-plugin.d.ts",
     "import": "./dist/index.js",
     "require": "./dist/index.cjs"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/ui5-vite-app-plugin.d.ts",
+  "types": "./dist/vite-ui5-integration-plugin.d.ts",
   "files": [
     "*.d.ts",
     "*.md",

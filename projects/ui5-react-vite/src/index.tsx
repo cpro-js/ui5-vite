@@ -1,4 +1,4 @@
 import "./main";
-import { render } from "virtual:@cpro-js/ui5-vite-app-plugin/runtime";
+import { render } from "virtual:@cpro-js/vite-ui5-integration-plugin/runtime";
 
 render(document.getElementById("root")!);

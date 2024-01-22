@@ -1477,7 +1477,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cpro-js/ui5-react-vite@workspace:projects/ui5-react-vite"
   dependencies:
-    "@cpro-js/ui5-vite-app-plugin": "npm:*"
+    "@cpro-js/vite-ui5-integration-plugin": "npm:*"
     "@sapui5/types": "npm:^1.120.4"
     "@types/react": "npm:^18.2.43"
     "@types/react-dom": "npm:^18.2.17"
@@ -1494,9 +1494,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cpro-js/ui5-vite-app-plugin@npm:*, @cpro-js/ui5-vite-app-plugin@workspace:packages/ui5-vite-app-plugin":
+"@cpro-js/ui5-vite-workspace@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@cpro-js/ui5-vite-app-plugin@workspace:packages/ui5-vite-app-plugin"
+  resolution: "@cpro-js/ui5-vite-workspace@workspace:."
+  dependencies:
+    "@prettier/plugin-xml": "npm:^3.2.2"
+    babel-plugin-transform-modules-ui5: "npm:^7.2.6"
+    husky: "npm:^8.0.3"
+    lint-staged: "npm:^15.2.0"
+    prettier: "npm:^3.1.1"
+    prettier-plugin-imports: "npm:^4.2.5"
+    prettier-plugin-packagejson: "npm:^2.4.8"
+    prettier-plugin-properties: "npm:^0.3.0"
+  languageName: unknown
+  linkType: soft
+
+"@cpro-js/vite-ui5-integration-plugin@npm:*, @cpro-js/vite-ui5-integration-plugin@workspace:packages/vite-ui5-integration-plugin":
+  version: 0.0.0-use.local
+  resolution: "@cpro-js/vite-ui5-integration-plugin@workspace:packages/vite-ui5-integration-plugin"
   dependencies:
     "@babel/core": "npm:^7.23.7"
     "@babel/preset-env": "npm:^7.23.7"
@@ -1514,21 +1529,6 @@ __metadata:
     vite: "npm:^5.0.10"
     vite-plugin-css-injected-by-js: "npm:^3.3.1"
     vite-plugin-dts: "npm:^3.7.0"
-  languageName: unknown
-  linkType: soft
-
-"@cpro-js/ui5-vite-workspace@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@cpro-js/ui5-vite-workspace@workspace:."
-  dependencies:
-    "@prettier/plugin-xml": "npm:^3.2.2"
-    babel-plugin-transform-modules-ui5: "npm:^7.2.6"
-    husky: "npm:^8.0.3"
-    lint-staged: "npm:^15.2.0"
-    prettier: "npm:^3.1.1"
-    prettier-plugin-imports: "npm:^4.2.5"
-    prettier-plugin-packagejson: "npm:^2.4.8"
-    prettier-plugin-properties: "npm:^0.3.0"
   languageName: unknown
   linkType: soft
 

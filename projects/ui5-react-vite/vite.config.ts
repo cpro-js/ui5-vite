@@ -1,5 +1,5 @@
 import { resolve } from "path";
-import ui5ViteApp from "@cpro-js/ui5-vite-app-plugin";
+import ui5ViteApp from "@cpro-js/vite-ui5-integration-plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import manifest from "./ui5/manifest.json";

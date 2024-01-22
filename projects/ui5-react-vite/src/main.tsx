@@ -3,7 +3,7 @@ import "vite/modulepreload-polyfill";
 import "./main.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { register } from "virtual:@cpro-js/ui5-vite-app-plugin/runtime";
+import { register } from "virtual:@cpro-js/vite-ui5-integration-plugin/runtime";
 import { App } from "./App.tsx";
 
 register((rootNode, options) => {

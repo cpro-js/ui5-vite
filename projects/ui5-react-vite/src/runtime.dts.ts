@@ -1,7 +1,7 @@
-/// <reference types="@cpro-js/ui5-vite-app-plugin/runtime" />
+/// <reference types="@cpro-js/vite-ui5-integration-plugin/runtime" />
 import type Component from "../ui5/Component.ts";
 
-declare module "virtual:@cpro-js/ui5-vite-app-plugin/runtime" {
+declare module "virtual:@cpro-js/vite-ui5-integration-plugin/runtime" {
   // enhance RenderOptions
 
   interface RenderOptions {

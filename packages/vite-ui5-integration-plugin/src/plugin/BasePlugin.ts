@@ -5,7 +5,7 @@ import { ConfigEnv, normalizePath, ResolvedConfig, UserConfig } from "vite";
 import { transformCode } from "../transform/babel.ts";
 import { Ui5ViteAppPluginOptions } from "../types.ts";
 
-const virtualModuleId = "virtual:@cpro-js/ui5-vite-app-plugin/runtime";
+const virtualModuleId = "virtual:@cpro-js/vite-ui5-integration-plugin/runtime";
 const resolvedVirtualModuleId = "\0" + virtualModuleId;
 
 export class BasePlugin {

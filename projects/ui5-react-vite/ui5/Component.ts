@@ -1,11 +1,12 @@
 import type MessageBox from "sap/m/MessageBox";
 import type UI5Event from "sap/ui/base/Event";
+import Core from "sap/ui/core/Core";
 import EventBus from "sap/ui/core/EventBus";
 import RenderManager from "sap/ui/core/RenderManager";
 import HashChanger from "sap/ui/core/routing/HashChanger";
 import UIComponent from "sap/ui/core/UIComponent";
 import Device from "sap/ui/Device";
-import { render, RenderOptions } from "virtual:@cpro-js/ui5-vite-app-plugin/runtime";
+import { render, RenderOptions } from "virtual:@cpro-js/vite-ui5-integration-plugin/runtime";
 
 /**
  * @namespace react.ui5.vite
@@ -26,8 +27,8 @@ export default class Component extends UIComponent {
   constructor() {
     super();
     this.eventBus = new EventBus();
-    sap.ui.getCore().attachThemeChanged(this._onThemeChanged, this);
-    sap.ui.getCore().attachLocalizationChanged(this._onLocalizationChanged, this);
+    Core.attachThemeChanged(this._onThemeChanged, this);
+    Core.attachLocalizationChanged(this._onLocalizationChanged, this);
 
     // load custom App code
     this.scriptPromise = this._loadScriptModule(this.resolveUri("/main.tsx"));
@@ -59,7 +60,7 @@ export default class Component extends UIComponent {
 
       const el = document.getElementById(this.appElementId) as HTMLElement;
       // // set text direction for web components
-      const rtl = sap.ui.getCore().getConfiguration().getRTL();
+      const rtl = Core.getConfiguration().getRTL();
       el.dir = rtl ? "rtl" : "ltr";
 
       this.unmountApp = render(el, this.getRenderOptions());
@@ -76,8 +77,8 @@ export default class Component extends UIComponent {
   public destroy() {
     this.unmountApp?.();
     this.eventBus.destroy();
-    sap.ui.getCore().detachThemeChanged(this._onThemeChanged, this);
-    sap.ui.getCore().detachLocalizationChanged(this._onLocalizationChanged, this);
+    Core.detachThemeChanged(this._onThemeChanged, this);
+    Core.detachLocalizationChanged(this._onLocalizationChanged, this);
 
     super.destroy();
   }
@@ -104,7 +105,7 @@ export default class Component extends UIComponent {
       intent: string;
     }>,
   ): Promise<void> {
-    const service = await this.getService("ShellUIService");
+    const service: sap.ushell.ui5service.ShellUIService = await this.getService("ShellUIService");
     service.setRelatedApps(relatedApps);
   }
 
@@ -141,14 +142,14 @@ export default class Component extends UIComponent {
    * BCP-47 language list, e.g. de-DE, en-US, en
    */
   public getLocale(): string {
-    return sap.ui.getCore().getConfiguration().getLanguage();
+    return Core.getConfiguration().getLanguage();
   }
 
   /**
    * Get the current theme, e.g. sap_fiori_3
    */
   public getTheme(): string {
-    return sap.ui.getCore().getConfiguration().getTheme();
+    return Core.getConfiguration().getTheme();
   }
 
   subscribeToThemeChanges(cb: (theme: string) => void) {
@@ -161,7 +162,7 @@ export default class Component extends UIComponent {
    * Get current animation mode, e.g. basic, full, minimal or none
    */
   public getAnimationMode(): string {
-    return sap.ui.getCore().getConfiguration().getAnimationMode();
+    return Core.getConfiguration().getAnimationMode();
   }
 
   /**
