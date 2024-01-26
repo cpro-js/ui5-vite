@@ -1,6 +1,7 @@
 {
   "name": "@cpro-js/vite-ui5-integration-plugin",
   "version": "0.0.0",
+  "license": "MIT",
   "type": "module",
   "exports": {
     "types": "./dist/vite-ui5-integration-plugin.d.ts",
