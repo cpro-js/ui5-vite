@@ -1,5 +1,6 @@
 import type MessageBox from "sap/m/MessageBox";
 import type UI5Event from "sap/ui/base/Event";
+import Configuration from "sap/ui/core/Configuration";
 import Core from "sap/ui/core/Core";
 import EventBus from "sap/ui/core/EventBus";
 import RenderManager from "sap/ui/core/RenderManager";
@@ -60,7 +61,7 @@ export default class Component extends UIComponent {
 
       const el = document.getElementById(this.appElementId) as HTMLElement;
       // // set text direction for web components
-      const rtl = Core.getConfiguration().getRTL();
+      const rtl = Configuration.getRTL();
       el.dir = rtl ? "rtl" : "ltr";
 
       this.unmountApp = render(el, this.getRenderOptions());
@@ -128,10 +129,11 @@ export default class Component extends UIComponent {
     if (!this.isLaunchpad()) {
       return;
     }
-
-    const service: sap.ushell.ui5service.ShellUIService & {
+    type EnhancedShellService = sap.ushell.ui5service.ShellUIService & {
       setBackNavigation: (cb: () => void) => void;
-    } = await this.getService("ShellUIService");
+    };
+
+    const service: EnhancedShellService = await this.getService("ShellUIService");
     service.setBackNavigation(function () {
       cb();
     });
@@ -142,14 +144,14 @@ export default class Component extends UIComponent {
    * BCP-47 language list, e.g. de-DE, en-US, en
    */
   public getLocale(): string {
-    return Core.getConfiguration().getLanguage();
+    return Configuration.getLanguage();
   }
 
   /**
    * Get the current theme, e.g. sap_fiori_3
    */
   public getTheme(): string {
-    return Core.getConfiguration().getTheme();
+    return Configuration.getTheme();
   }
 
   subscribeToThemeChanges(cb: (theme: string) => void) {
@@ -161,8 +163,9 @@ export default class Component extends UIComponent {
   /**
    * Get current animation mode, e.g. basic, full, minimal or none
    */
-  public getAnimationMode(): string {
-    return Core.getConfiguration().getAnimationMode();
+  public getAnimationMode(): "basic" | "full" | "minimal" | "none" {
+    // @ts-ignore: incorrect typing & missing export of type ...
+    return Configuration.getAnimationMode();
   }
 
   /**
@@ -254,10 +257,12 @@ export default class Component extends UIComponent {
   }
 
   private _loadScriptModule(srcUrl: string): Promise<void> {
+    const appId = this.getManifestEntry("/sap.app/id") as string;
     return new Promise((resolve, reject) => {
       const head = document.head || document.getElementsByTagName("head")[0];
       const allScripts = [...head.getElementsByTagName("script")];
       let script = document.createElement("script");
+      script.setAttribute("data-app", appId);
       script.type = "module";
       script.src = srcUrl;
       if (allScripts.some((s) => s.src === script.src)) {
