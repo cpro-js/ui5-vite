@@ -1,6 +1,11 @@
 {
   "name": "@cpro-js/vite-ui5-integration-plugin",
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cpro-js/ui5-vite.git",
+    "directory": "packages/vite-ui5-integration-plugin"
+  },
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -14,11 +19,13 @@
   "files": [
     "*.d.ts",
     "*.md",
+    "src",
     "dist"
   ],
   "scripts": {
     "build": "tsc && vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "prepack": "vite build"
   },
   "dependencies": {
     "@babel/core": "^7.23.7",
@@ -39,5 +46,8 @@
     "@types/normalize-path": "^3.0.2",
     "typescript": "^5.3.3",
     "vite-plugin-dts": "^3.7.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
