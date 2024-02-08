@@ -1,6 +1,4 @@
 # base
-.env
-.env.*
 node_modules/
 
 # build folders

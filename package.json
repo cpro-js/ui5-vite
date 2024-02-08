@@ -5,8 +5,12 @@
   "license": "MIT",
   "module": "true",
   "workspaces": [
+    "examples/*",
     "packages/*"
   ],
+  "scripts": {
+    "build": "yarn workspaces foreach -A --topological-dev run build"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
@@ -16,6 +20,9 @@
     "*.{xml,js,jsx,ts,tsx,json,css,md}": [
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "babel-plugin-transform-modules-ui5": "^7.2.6"
   },
   "devDependencies": {
     "@prettier/plugin-xml": "^3.2.2",
