@@ -1,6 +1,6 @@
 {
   "name": "@cpro-js/vite-ui5-integration-plugin",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/cpro-js/ui5-vite.git",
