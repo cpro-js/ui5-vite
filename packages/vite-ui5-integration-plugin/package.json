@@ -14,11 +14,13 @@
   "files": [
     "*.d.ts",
     "*.md",
+    "src",
     "dist"
   ],
   "scripts": {
     "build": "tsc && vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "prepack": "vite build"
   },
   "dependencies": {
     "@babel/core": "^7.23.7",

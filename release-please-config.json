@@ -1,0 +1,23 @@
+{
+  "plugins": [
+    {
+      "type": "node-workspace",
+      "updatePeerDependencies": true,
+      "merge": false
+    },
+    {
+      "type": "linked-versions",
+      "groupName": "Vite Packages",
+      "components": ["@cpro-js/vite-ui5-integration-plugin"]
+    }
+  ],
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "include-component-in-tag": true,
+  "group-pull-request-title-pattern": "chore: release branch ${branch}",
+  "packages": {
+    "packages/vite-ui5-integration-plugin": {
+      "component": "@cpro-js/vite-ui5-integration-plugin"
+    }
+  }
+}
