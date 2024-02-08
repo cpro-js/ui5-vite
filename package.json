@@ -5,7 +5,7 @@
   "license": "MIT",
   "module": "true",
   "workspaces": [
-    "projects/*",
+    "examples/*",
     "packages/*"
   ],
   "husky": {
@@ -18,6 +18,9 @@
       "prettier --write"
     ]
   },
+  "dependencies": {
+    "babel-plugin-transform-modules-ui5": "^7.2.6"
+  },
   "devDependencies": {
     "@prettier/plugin-xml": "^3.2.2",
     "husky": "^8.0.3",
@@ -27,8 +30,5 @@
     "prettier-plugin-packagejson": "^2.4.8",
     "prettier-plugin-properties": "^0.3.0"
   },
-  "packageManager": "yarn@4.0.2",
-  "dependencies": {
-    "babel-plugin-transform-modules-ui5": "^7.2.6"
-  }
+  "packageManager": "yarn@4.0.2"
 }
