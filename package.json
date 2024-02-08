@@ -8,6 +8,9 @@
     "examples/*",
     "packages/*"
   ],
+  "scripts": {
+    "build": "yarn workspaces foreach -A --topological-dev run build"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
