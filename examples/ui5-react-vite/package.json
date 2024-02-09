@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@cpro-js/vite-ui5-integration-plugin": "*",
+    "@cpro-js/vite-ui5-resources-proxy": "*",
     "@sapui5/types": "^1.120.4",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",

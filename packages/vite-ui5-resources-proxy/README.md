@@ -13,7 +13,7 @@ npm install --save-dev @cpro-js/vite-ui5-resources-proxy
 
 ```ts
 import { defineConfig } from "vite";
-import viteUI5ResourcesProxyPlugin from "@cpro-js/vite-ui5-resources-proxy"
+import viteUI5ResourcesProxyPlugin from "@cpro-js/vite-ui5-resources-proxy";
 
 return defineConfig({
   // ...
@@ -21,7 +21,7 @@ return defineConfig({
     // ...
     viteUI5ResourcesProxyPlugin({
       version: "1.120.6",
-      cdn: "https://ui5.sap.com",
+      url: "https://ui5.sap.com",
       debug: false
     }),
   ],

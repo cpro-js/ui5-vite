@@ -1478,6 +1478,7 @@ __metadata:
   resolution: "@cpro-js/ui5-react-vite@workspace:examples/ui5-react-vite"
   dependencies:
     "@cpro-js/vite-ui5-integration-plugin": "npm:*"
+    "@cpro-js/vite-ui5-resources-proxy": "npm:*"
     "@sapui5/types": "npm:^1.120.4"
     "@types/react": "npm:^18.2.43"
     "@types/react-dom": "npm:^18.2.17"
@@ -1532,7 +1533,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cpro-js/vite-ui5-resources-proxy@workspace:packages/vite-ui5-resources-proxy":
+"@cpro-js/vite-ui5-resources-proxy@npm:*, @cpro-js/vite-ui5-resources-proxy@workspace:packages/vite-ui5-resources-proxy":
   version: 0.0.0-use.local
   resolution: "@cpro-js/vite-ui5-resources-proxy@workspace:packages/vite-ui5-resources-proxy"
   dependencies:
