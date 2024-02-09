@@ -1,21 +1,21 @@
 {
-  "name": "@cpro-js/vite-ui5-resources-proxy",
+  "name": "@cpro-js/vite-ui5-resources-proxy-plugin",
   "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/cpro-js/ui5-vite.git",
-    "directory": "packages/vite-ui5-resources-proxy"
+    "directory": "packages/vite-ui5-resources-proxy-plugin"
   },
   "license": "MIT",
   "type": "module",
   "exports": {
-    "types": "./dist/vite-ui5-resources-proxy.d.ts",
+    "types": "./dist/vite-ui5-resources-proxy-plugin.d.ts",
     "import": "./dist/index.js",
     "require": "./dist/index.cjs"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/vite-ui5-resources-proxy.d.ts",
+  "types": "./dist/vite-ui5-resources-proxy-plugin.d.ts",
   "files": [
     "*.d.ts",
     "*.md",

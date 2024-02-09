@@ -1,6 +1,6 @@
 import { resolve } from "path";
 import ui5ViteApp from "@cpro-js/vite-ui5-integration-plugin";
-import viteUI5ResourcesProxyPlugin from "@cpro-js/vite-ui5-resources-proxy";
+import viteUI5ResourcesProxyPlugin from "@cpro-js/vite-ui5-resources-proxy-plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import manifest from "./ui5/manifest.json";

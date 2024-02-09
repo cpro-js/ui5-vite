@@ -1,4 +1,4 @@
-# Vite UI5 Resources Proxy
+# Vite UI5 Resources Proxy Plugin
 
 A custom Vite plugin to configure Vite's proxy for loading UI5 sources from Content Delivery Network (CDN).
 All requests to `/resources ` and `/test-resources` will be proxied to the configured CDN (default: https://ui5.sap.com).
@@ -6,14 +6,14 @@ All requests to `/resources ` and `/test-resources` will be proxied to the confi
 ## Setup
 
 ```bash
-npm install --save-dev @cpro-js/vite-ui5-resources-proxy
+npm install --save-dev @cpro-js/vite-ui5-resources-proxy-plugin
 ```
 
 **vite.config.ts**
 
 ```ts
 import { defineConfig } from "vite";
-import viteUI5ResourcesProxyPlugin from "@cpro-js/vite-ui5-resources-proxy";
+import viteUI5ResourcesProxyPlugin from "@cpro-js/vite-ui5-resources-proxy-plugin";
 
 return defineConfig({
   // ...
