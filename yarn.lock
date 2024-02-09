@@ -1544,6 +1544,8 @@ __metadata:
     vite: "npm:^5.1.1"
     vite-plugin-css-injected-by-js: "npm:^3.3.1"
     vite-plugin-dts: "npm:^3.7.0"
+  peerDependencies:
+    vite: ^5.1.1
   languageName: unknown
   linkType: soft
 
@@ -1570,7 +1572,7 @@ __metadata:
     vite: "npm:^5.1.1"
     vite-plugin-dts: "npm:^3.7.0"
   peerDependencies:
-    vite: ^5.0.10
+    vite: ^5.1.1
   languageName: unknown
   linkType: soft
 

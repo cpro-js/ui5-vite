@@ -33,7 +33,7 @@
     "vite-plugin-dts": "^3.7.0"
   },
   "peerDependencies": {
-    "vite": "^5.0.10"
+    "vite": "^5.1.1"
   },
   "publishConfig": {
     "access": "public"
