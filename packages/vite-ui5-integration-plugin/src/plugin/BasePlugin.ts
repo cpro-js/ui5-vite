@@ -3,7 +3,7 @@ import path from "path";
 import { EmittedAsset, PluginContext, SourceDescription } from "rollup";
 import { ConfigEnv, normalizePath, ResolvedConfig, UserConfig } from "vite";
 import { transformCode } from "../transform/babel.ts";
-import { Ui5ViteAppPluginOptions } from "../types.ts";
+import { ViteUI5IntegrationPluginOptions } from "../types.ts";
 
 const virtualModuleId = "virtual:@cpro-js/vite-ui5-integration-plugin/runtime";
 const resolvedVirtualModuleId = "\0" + virtualModuleId;
@@ -12,7 +12,7 @@ export class BasePlugin {
   constructor(
     protected viteConfig: UserConfig | ResolvedConfig,
     protected viteEnv: ConfigEnv,
-    protected pluginOptions: Ui5ViteAppPluginOptions,
+    protected pluginOptions: ViteUI5IntegrationPluginOptions,
   ) {}
 
   public config = () => {

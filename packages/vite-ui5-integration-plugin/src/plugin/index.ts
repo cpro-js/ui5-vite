@@ -1,9 +1,9 @@
 import { ConfigEnv, Plugin, PreviewServer, UserConfig, ViteDevServer } from "vite";
-import { Ui5ViteAppPluginOptions } from "../types.ts";
+import { ViteUI5IntegrationPluginOptions } from "../types.ts";
 import { BuildPlugin } from "./BuildPlugin.ts";
 import { ServePlugin } from "./ServePlugin.ts";
 
-export default (options: Ui5ViteAppPluginOptions): Plugin => {
+export default (options: ViteUI5IntegrationPluginOptions): Plugin => {
   let plugin: BuildPlugin | ServePlugin, userConfig: UserConfig, configEnv: ConfigEnv;
   return {
     name: "vite-ui5-integration-plugin",

@@ -1,3 +1,3 @@
-export interface Ui5ViteAppPluginOptions {
+export interface ViteUI5IntegrationPluginOptions {
   appId: string;
 }

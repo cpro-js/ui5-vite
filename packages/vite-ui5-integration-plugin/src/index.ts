@@ -1,9 +1,9 @@
 import { Plugin } from "vite";
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 import ui5Vite from "./plugin";
-import { Ui5ViteAppPluginOptions } from "./types.ts";
+import { ViteUI5IntegrationPluginOptions } from "./types.ts";
 
-export default (options: Ui5ViteAppPluginOptions): Array<Plugin> => {
+export default (options: ViteUI5IntegrationPluginOptions): Array<Plugin> => {
   return [
     ui5Vite(options),
     cssInjectedByJsPlugin({
