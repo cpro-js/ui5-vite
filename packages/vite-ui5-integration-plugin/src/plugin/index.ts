@@ -6,7 +6,7 @@ import { ServePlugin } from "./ServePlugin.ts";
 export default (options: Ui5ViteAppPluginOptions): Plugin => {
   let plugin: BuildPlugin | ServePlugin, userConfig: UserConfig, configEnv: ConfigEnv;
   return {
-    name: "ui5-vite-app",
+    name: "vite-ui5-integration-plugin",
     config(config: UserConfig, env: ConfigEnv) {
       userConfig = config;
       configEnv = env;
