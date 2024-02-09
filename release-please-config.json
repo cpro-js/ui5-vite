@@ -8,7 +8,11 @@
     {
       "type": "linked-versions",
       "groupName": "Vite",
-      "components": ["@cpro-js/vite-ui5-integration-plugin", "@cpro-js/vite-ui5-resources-proxy-plugin"]
+      "components": [
+        "@cpro-js/vite-ui5-integration-plugin",
+        "@cpro-js/vite-ui5-mockserver-plugin",
+        "@cpro-js/vite-ui5-resources-proxy-plugin"
+      ]
     }
   ],
   "bump-minor-pre-major": true,
@@ -20,6 +24,9 @@
   "packages": {
     "packages/vite-ui5-integration-plugin": {
       "component": "@cpro-js/vite-ui5-integration-plugin"
+    },
+    "packages/vite-ui5-mockserver-plugin": {
+      "component": "@cpro-js/vite-ui5-mockserver-plugin"
     },
     "packages/vite-ui5-resources-proxy-plugin": {
       "component": "@cpro-js/vite-ui5-resources-proxy-plugin"
