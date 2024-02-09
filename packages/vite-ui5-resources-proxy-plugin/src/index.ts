@@ -10,7 +10,7 @@ export default ({
   const ui5Version = !version || version === "latest" ? "" : version;
 
   return {
-    name: "ui5-resources-plugin",
+    name: "vite-ui5-resources-proxy-plugin",
     config(config, env) {
       return {
         ...config,
