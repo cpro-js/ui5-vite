@@ -1532,6 +1532,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@cpro-js/vite-ui5-resources-proxy@workspace:packages/vite-ui5-resources-proxy":
+  version: 0.0.0-use.local
+  resolution: "@cpro-js/vite-ui5-resources-proxy@workspace:packages/vite-ui5-resources-proxy"
+  dependencies:
+    typescript: "npm:^5.3.3"
+    vite: "npm:^5.0.10"
+    vite-plugin-dts: "npm:^3.7.0"
+  peerDependencies:
+    vite: ^5.0.10
+  languageName: unknown
+  linkType: soft
+
 "@esbuild/aix-ppc64@npm:0.19.11":
   version: 0.19.11
   resolution: "@esbuild/aix-ppc64@npm:0.19.11"
