@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/cpro-js/ui5-vite/compare/@cpro-js/vite-ui5-integration-plugin-v0.1.1...@cpro-js/vite-ui5-integration-plugin-v0.1.2) (2024-02-16)
+
+
+### Bug Fixes
+
+* **vite-ui5-integration-plugin:** unmount app correctly ([#13](https://github.com/cpro-js/ui5-vite/issues/13)) ([2c8851d](https://github.com/cpro-js/ui5-vite/commit/2c8851d42a97485bceb888e576e36b48d36a39cc))
+
 ## [0.1.1](https://github.com/cpro-js/ui5-vite/compare/@cpro-js/vite-ui5-integration-plugin-v0.1.0...@cpro-js/vite-ui5-integration-plugin-v0.1.1) (2024-02-09)
 
 

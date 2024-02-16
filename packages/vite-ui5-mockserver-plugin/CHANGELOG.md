@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/cpro-js/ui5-vite/compare/@cpro-js/vite-ui5-mockserver-plugin-v0.1.1...@cpro-js/vite-ui5-mockserver-plugin-v0.1.2) (2024-02-16)
+
+
+### Miscellaneous Chores
+
+* **@cpro-js/vite-ui5-mockserver-plugin:** Synchronize Vite versions
+
 ## [0.1.1](https://github.com/cpro-js/ui5-vite/compare/@cpro-js/vite-ui5-mockserver-plugin-v0.0.1...@cpro-js/vite-ui5-mockserver-plugin-v0.1.1) (2024-02-09)
 
 
