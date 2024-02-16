@@ -58,13 +58,21 @@ export default class Component extends UIComponent {
 
     try {
       await this.scriptPromise;
+      if (this.isDestroyed()) {
+        // already destroyed while loading application --> no further actions necessary
+        return;
+      }
 
       const el = document.getElementById(this.appElementId) as HTMLElement;
       // // set text direction for web components
       const rtl = Configuration.getRTL();
       el.dir = rtl ? "rtl" : "ltr";
 
-      this.unmountApp = render(el, this.getRenderOptions());
+      this.unmountApp = await render(el, this.getRenderOptions());
+      if (this.isDestroyed()) {
+        // initialization took too long --> unmount app
+        this.unmountApp();
+      }
     } catch (e: Error | unknown) {
       console.error(e);
       // lazy load to speed up initial page load
