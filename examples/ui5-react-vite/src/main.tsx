@@ -7,6 +7,8 @@ import { App } from "./App.tsx";
 
 register((rootNode, options) => {
   const root = createRoot(rootNode);
+  console.log("render");
+
   root.render(
     <StrictMode>
       <App config={options} />
@@ -15,6 +17,7 @@ register((rootNode, options) => {
 
   // => clean up
   return () => {
+    console.log("unmount");
     root.unmount();
   };
 });

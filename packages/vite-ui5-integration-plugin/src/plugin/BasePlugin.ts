@@ -87,7 +87,7 @@ export class BasePlugin {
           };
 
           export const render = function (...args) {
-            return startCb(...args);
+            return Promise.resolve(startCb(...args));
           };
 
           if (!window["${ui5RuntimeGlobalVariable}"]) {
@@ -118,14 +118,16 @@ export class BasePlugin {
         transformUi5: true,
         codeToInject: `
             const render = function(...args) {
-              if (!window["${ui5RuntimeGlobalVariable}"] || typeof window["${ui5RuntimeGlobalVariable}"].start === "undefined") {
-                window["${ui5RuntimeGlobalVariable}"] = {};
-                window["${ui5RuntimeGlobalVariable}"].whenRegistered = function() {
-                  window["${ui5RuntimeGlobalVariable}"].start(...args);
+              return new Promise((resolve) => {
+                if (!window["${ui5RuntimeGlobalVariable}"] || typeof window["${ui5RuntimeGlobalVariable}"].start === "undefined") {
+                    window["${ui5RuntimeGlobalVariable}"] = {};
+                    window["${ui5RuntimeGlobalVariable}"].whenRegistered = function() {
+                      resolve(window["${ui5RuntimeGlobalVariable}"].start(...args));
+                    }
+                } else {
+                  resolve(window["${ui5RuntimeGlobalVariable}"].start(...args));
                 }
-              } else {
-                window["${ui5RuntimeGlobalVariable}"].start(...args);
-              }
+              });
             };
           `,
       });
