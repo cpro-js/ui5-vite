@@ -1,6 +1,6 @@
 {
   "name": "@cpro-js/ui5-vite-workspace",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "license": "MIT",
   "module": "true",

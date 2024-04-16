@@ -9,6 +9,7 @@
       "type": "linked-versions",
       "groupName": "Vite",
       "components": [
+        "@cpro-js/vite-ui5-common-config",
         "@cpro-js/vite-ui5-integration-plugin",
         "@cpro-js/vite-ui5-mockserver-plugin",
         "@cpro-js/vite-ui5-resources-proxy-plugin"
@@ -22,6 +23,9 @@
   "pull-request-title-pattern": "chore(release): publish branch ${branch}",
   "group-pull-request-title-pattern": "chore(release): publish branch ${branch}",
   "packages": {
+    "packages/vite-ui5-common-config": {
+      "component": "@cpro-js/vite-ui5-common-config"
+    },
     "packages/vite-ui5-integration-plugin": {
       "component": "@cpro-js/vite-ui5-integration-plugin"
     },
