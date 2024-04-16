@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/cpro-js/ui5-vite/compare/@cpro-js/vite-ui5-resources-proxy-plugin-v0.1.2...@cpro-js/vite-ui5-resources-proxy-plugin-v0.1.3) (2024-04-16)
+
+
+### Miscellaneous Chores
+
+* **@cpro-js/vite-ui5-resources-proxy-plugin:** Synchronize Vite versions
+
 ## [0.1.2](https://github.com/cpro-js/ui5-vite/compare/@cpro-js/vite-ui5-resources-proxy-plugin-v0.1.1...@cpro-js/vite-ui5-resources-proxy-plugin-v0.1.2) (2024-02-16)
 
 
