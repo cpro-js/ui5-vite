@@ -135,7 +135,7 @@ export class BasePlugin {
   }
 
   protected async getAdditionalUi5Files(): Promise<Array<EmittedAsset & { id: string }>> {
-    const projectDir = path.resolve(this.viteConfig.root!, "..");
+    const projectDir = process.cwd();
     const ui5Dir = path.join(projectDir, "ui5");
 
     const manifestJson = path.resolve(ui5Dir, "./manifest.json");
