@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/cpro-js/ui5-vite/compare/@cpro-js/vite-ui5-integration-plugin-v0.1.3...@cpro-js/vite-ui5-integration-plugin-v0.1.4) (2025-01-17)
+
+
+### Bug Fixes
+
+* use process.cwd() for determining project root ([#16](https://github.com/cpro-js/ui5-vite/issues/16)) ([bafcfd8](https://github.com/cpro-js/ui5-vite/commit/bafcfd857fcbf0a56384d85bd286cf1bbf391b4f))
+
 ## [0.1.3](https://github.com/cpro-js/ui5-vite/compare/@cpro-js/vite-ui5-integration-plugin-v0.1.2...@cpro-js/vite-ui5-integration-plugin-v0.1.3) (2024-04-16)
 
 

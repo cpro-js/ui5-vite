@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.4](https://github.com/cpro-js/ui5-vite/compare/@cpro-js/vite-ui5-common-config-v0.1.3...@cpro-js/vite-ui5-common-config-v0.1.4) (2025-01-17)
+
+
+### Miscellaneous Chores
+
+* **@cpro-js/vite-ui5-common-config:** Synchronize Vite versions
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cpro-js/vite-ui5-integration-plugin bumped from 0.1.3 to 0.1.4
+    * @cpro-js/vite-ui5-mockserver-plugin bumped from 0.1.3 to 0.1.4
+    * @cpro-js/vite-ui5-resources-proxy-plugin bumped from 0.1.3 to 0.1.4
+
 ## [0.1.3](https://github.com/cpro-js/ui5-vite/compare/@cpro-js/vite-ui5-common-config-v0.1.2...@cpro-js/vite-ui5-common-config-v0.1.3) (2024-04-16)
 
 
