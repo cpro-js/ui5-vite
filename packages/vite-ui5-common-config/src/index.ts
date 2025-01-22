@@ -43,6 +43,7 @@ export interface CommonConfigOptions {
   };
   debug?: boolean;
 }
+
 export function createCommonConfig(options: CommonConfigOptions) {
   const { appId, ui5Version, mockServerConfig, proxy, debug = false } = options;
 
@@ -101,15 +102,25 @@ export function createCommonConfig(options: CommonConfigOptions) {
                 auth: proxy.username && proxy.password ? `${proxy.username}:${proxy.password}` : undefined,
                 ws: true,
                 configure: (proxy, options) => {
-                  if (!debug) {
-                    return;
-                  }
-
                   proxy.on("proxyReq", (proxyReq, req, _res) => {
-                    console.log("PROXY: Sending Request to Target:", req.method, req.url);
+                    if (debug) {
+                      console.log("PROXY: Sending Request to Target:", req.method, req.url);
+                    }
                   });
                   proxy.on("proxyRes", (proxyRes, req, _res) => {
-                    console.log("PROXY: Received Response from Target:", proxyRes.statusCode, req.url);
+                    if (debug) {
+                      console.log("PROXY: Sending Request to Target:", req.method, req.url);
+                    }
+
+                    const header = proxyRes?.headers?.["set-cookie"];
+                    if (header?.length) {
+                      proxyRes.headers["set-cookie"] = header.map((cookie) =>
+                        cookie.replace(
+                          /\s?Domain=[^\s]*\s?|\s?SameSite=[^\s]*\s?|\s?Secure[^\s]*\s?|\s?Partitioned[^\s]*\s?/gi,
+                          "",
+                        ),
+                      );
+                    }
                   });
                 },
                 rewrite: (path) => {
