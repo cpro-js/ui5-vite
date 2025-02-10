@@ -1,6 +1,6 @@
 {
-  "packages/vite-ui5-common-config": "0.1.5",
-  "packages/vite-ui5-integration-plugin": "0.1.5",
-  "packages/vite-ui5-mockserver-plugin": "0.1.5",
-  "packages/vite-ui5-resources-proxy-plugin": "0.1.5"
+  "packages/vite-ui5-common-config": "0.1.6",
+  "packages/vite-ui5-integration-plugin": "0.1.6",
+  "packages/vite-ui5-mockserver-plugin": "0.1.6",
+  "packages/vite-ui5-resources-proxy-plugin": "0.1.6"
 }
