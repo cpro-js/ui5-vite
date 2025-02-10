@@ -9,9 +9,14 @@
   "license": "MIT",
   "type": "module",
   "exports": {
-    "types": "./dist/vite-ui5-integration-plugin.d.ts",
-    "import": "./dist/index.js",
-    "require": "./dist/index.cjs"
+    ".": {
+      "types": "./dist/vite-ui5-integration-plugin.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./runtime": {
+      "types": "./runtime.d.ts"
+    }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
