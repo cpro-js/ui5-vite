@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/cpro-js/ui5-vite/compare/@cpro-js/vite-ui5-integration-plugin-v0.1.5...@cpro-js/vite-ui5-integration-plugin-v0.1.6) (2025-02-10)
+
+
+### Bug Fixes
+
+* runtime types for pure ESM ([#20](https://github.com/cpro-js/ui5-vite/issues/20)) ([ec26838](https://github.com/cpro-js/ui5-vite/commit/ec26838470c3efb930b529c2b5d28abae20d9881))
+
 ## [0.1.5](https://github.com/cpro-js/ui5-vite/compare/@cpro-js/vite-ui5-integration-plugin-v0.1.4...@cpro-js/vite-ui5-integration-plugin-v0.1.5) (2025-01-24)
 
 

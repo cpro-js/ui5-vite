@@ -1,6 +1,6 @@
 {
   "name": "@cpro-js/vite-ui5-common-config",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/cpro-js/ui5-vite.git",
@@ -31,9 +31,9 @@
     "@babel/core": "^7.23.7",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-decorators": "^7.23.7",
-    "@cpro-js/vite-ui5-integration-plugin": "0.1.5",
-    "@cpro-js/vite-ui5-mockserver-plugin": "0.1.5",
-    "@cpro-js/vite-ui5-resources-proxy-plugin": "0.1.5",
+    "@cpro-js/vite-ui5-integration-plugin": "0.1.6",
+    "@cpro-js/vite-ui5-mockserver-plugin": "0.1.6",
+    "@cpro-js/vite-ui5-resources-proxy-plugin": "0.1.6",
     "@vitejs/plugin-react": "^4.2.1",
     "babel-plugin-transform-typescript-metadata": "^0.3.2"
   },
